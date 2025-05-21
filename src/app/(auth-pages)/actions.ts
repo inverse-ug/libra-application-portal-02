@@ -40,9 +40,8 @@ export async function registerApplicantEmail(
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    const program = formData.get("program") as string;
 
-    validateFormFields({ name, email, password, program });
+    validateFormFields({ name, email, password });
 
     const existingApplicant = await prisma.applicant.findUnique({
       where: { email },
