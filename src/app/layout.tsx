@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
 import NextTopLoader from "@/components/next-top-loader";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <SessionProvider>
-          <NextTopLoader />
+          <Suspense>
+            <NextTopLoader />
+          </Suspense>
           {children}
           <Toaster richColors position="top-center" />
         </SessionProvider>
