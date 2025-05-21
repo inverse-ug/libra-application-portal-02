@@ -1,8 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { Eye, EyeOff, Loader } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -13,21 +19,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff, Loader } from "lucide-react";
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
-import { loginApplicant } from "../../actions";
-
-// Update the ActionResponse type to include new fields
-interface ActionResponse {
-  success: boolean;
-  message: string;
-  requiresVerification?: boolean;
-  verificationType?: "email" | "phone";
-  identifier?: string;
-  redirectUrl?: string;
-}
 
 const loginSchema = z.object({
   identifier: z
@@ -62,45 +53,72 @@ export default function LoginForm() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
     setIsSubmitting(true);
 
     try {
-      // Create FormData object to match server action signature
-      const formData = new FormData();
-      formData.append("identifier", values.identifier);
-      formData.append("password", values.password);
-      formData.append("callbackUrl", searchParams.get("callbackUrl") || "/");
-
-      // Call server action
-      const result = (await loginApplicant(formData)) as ActionResponse;
-
-      if (result.success && result.redirectUrl) {
-        toast.success("Login successful");
-        router.push(result.redirectUrl);
-        router.refresh();
-      } else if (result.requiresVerification && result.identifier) {
-        // Handle unverified account gracefully
-        toast.message("Please verify your account", {
-          description: "You need to verify your account before logging in",
-        });
-        router.push(
-          `/verify?${result.verificationType}=${encodeURIComponent(result.identifier)}`
-        );
-      } else {
-        toast.error("Login failed", {
-          description: result.message || "Please try again",
-        });
-      }
-    } catch (error: any) {
-      console.error("Login error:", error);
-      toast.error("An unexpected error occurred", {
-        description: error.message || "Please try again later",
+      const callbackUrl = searchParams.get("callbackUrl") || "/";
+      const result = await signIn("credentials", {
+        identifier: values.identifier,
+        password: values.password,
+        redirect: false,
+        callbackUrl,
       });
+
+      if (result?.error) {
+        // Map error codes/messages to user-friendly messages
+        const errorMessages: Record<string, string> = {
+          CredentialsSignin: "Invalid credentials. Please try again.",
+          "account not verified": "Your account needs to be verified.",
+          "invalid phone number": "Please enter a valid Ugandan phone number.",
+          "account not found": "No account found with these credentials.",
+          "server error": "The authentication server is currently unavailable.",
+        };
+
+        let friendlyError = "Login failed. Please try again.";
+
+        // Check if error matches any known patterns
+        for (const [errorKey, errorMessage] of Object.entries(errorMessages)) {
+          if (result.error.toLowerCase().includes(errorKey.toLowerCase())) {
+            friendlyError = errorMessage;
+            break;
+          }
+        }
+
+        // Handle unverified account case specially
+        if (result.error.toLowerCase().includes("account not verified")) {
+          const isEmail = values.identifier.includes("@");
+          const verificationType = isEmail ? "email" : "phone";
+
+          toast.message("Account Verification Required", {
+            description: "You need to verify your account before logging in",
+          });
+
+          return router.push(
+            `/verify?${verificationType}=${encodeURIComponent(values.identifier)}`
+          );
+        }
+
+        toast.error(friendlyError);
+
+        // Log the actual error for debugging
+        if (process.env.NODE_ENV === "development") {
+          console.error("Login error details:", result.error);
+        }
+      } else if (result?.ok) {
+        toast.success("Login successful");
+        router.push(callbackUrl);
+        router.refresh();
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   return (
     <div className="px-2 py-8 sm:p-8">
