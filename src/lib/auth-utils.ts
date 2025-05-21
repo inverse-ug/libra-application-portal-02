@@ -5,7 +5,7 @@ import AfricasTalking from "africastalking";
 import { render } from "@react-email/render";
 import { VerificationEmail } from "@/components/emails/verification-email";
 import { PasswordResetEmail } from "@/components/emails/password-reset-email";
-import prisma from "../../lib/prisma";
+import prisma from "./prisma";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
 

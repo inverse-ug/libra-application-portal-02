@@ -4,7 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { formatUgandanPhoneNumber } from "@/lib/auth-utils";
 import bcrypt from "bcryptjs";
 import { Adapter } from "next-auth/adapters";
-import prisma from "./lib/prisma";
+import prisma from "./src/lib/prisma";
 import { Applicant } from "@/app/generated/prisma";
 import { JWT } from "next-auth/jwt";
 

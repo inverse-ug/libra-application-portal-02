@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { auth } from "../../../auth";
-import prisma from "../../../lib/prisma";
+import prisma from "../../lib/prisma";
 import { put, del } from "@vercel/blob";
 import { DocumentType } from "../generated/prisma";
 
