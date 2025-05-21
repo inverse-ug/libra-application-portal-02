@@ -6,16 +6,15 @@ export const metadata: Metadata = {
   description: "Complete your application payment",
 };
 
-interface PaymentPageParams {
-  params: {
-    id: string;
-  };
-}
-
-export default function Payment({ params }: PaymentPageParams) {
+export default async function Payment({
+  params,
+}: {
+  params: Promise<{ applicationId: string }>;
+}) {
+  const { applicationId } = await params;
   return (
     <main className="min-h-screen bg-background">
-      <PaymentPage applicationId={params.id} />
+      <PaymentPage applicationId={applicationId} />
     </main>
   );
 }
