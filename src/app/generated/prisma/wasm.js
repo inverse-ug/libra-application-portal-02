@@ -216,7 +216,6 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   basicsComplete: 'basicsComplete',
   personalInfoComplete: 'personalInfoComplete',
   educationComplete: 'educationComplete',
-  workExperienceComplete: 'workExperienceComplete',
   programInfoComplete: 'programInfoComplete',
   documentsComplete: 'documentsComplete',
   declarationComplete: 'declarationComplete',
@@ -224,19 +223,6 @@ exports.Prisma.ApplicationScalarFieldEnum = {
   declarationDate: 'declarationDate',
   isShortCourse: 'isShortCourse',
   shortCourseDuration: 'shortCourseDuration'
-};
-
-exports.Prisma.WorkExperienceScalarFieldEnum = {
-  id: 'id',
-  applicationId: 'applicationId',
-  applicantId: 'applicantId',
-  company: 'company',
-  position: 'position',
-  startDate: 'startDate',
-  endDate: 'endDate',
-  description: 'description',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.EducationHistoryScalarFieldEnum = {
@@ -387,7 +373,6 @@ exports.Prisma.ModelName = {
   Program: 'Program',
   Category: 'Category',
   Application: 'Application',
-  WorkExperience: 'WorkExperience',
   EducationHistory: 'EducationHistory',
   Payment: 'Payment',
   Admission: 'Admission',

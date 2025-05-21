@@ -49,11 +49,6 @@ export type Category = $Result.DefaultSelection<Prisma.$CategoryPayload>
  */
 export type Application = $Result.DefaultSelection<Prisma.$ApplicationPayload>
 /**
- * Model WorkExperience
- * 
- */
-export type WorkExperience = $Result.DefaultSelection<Prisma.$WorkExperiencePayload>
-/**
  * Model EducationHistory
  * 
  */
@@ -387,16 +382,6 @@ export class PrismaClient<
     * ```
     */
   get application(): Prisma.ApplicationDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.workExperience`: Exposes CRUD operations for the **WorkExperience** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more WorkExperiences
-    * const workExperiences = await prisma.workExperience.findMany()
-    * ```
-    */
-  get workExperience(): Prisma.WorkExperienceDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.educationHistory`: Exposes CRUD operations for the **EducationHistory** model.
@@ -904,7 +889,6 @@ export namespace Prisma {
     Program: 'Program',
     Category: 'Category',
     Application: 'Application',
-    WorkExperience: 'WorkExperience',
     EducationHistory: 'EducationHistory',
     Payment: 'Payment',
     Admission: 'Admission',
@@ -929,7 +913,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "applicant" | "verificationToken" | "passwordResetToken" | "intake" | "program" | "category" | "application" | "workExperience" | "educationHistory" | "payment" | "admission" | "document" | "announcement" | "notification"
+      modelProps: "applicant" | "verificationToken" | "passwordResetToken" | "intake" | "program" | "category" | "application" | "educationHistory" | "payment" | "admission" | "document" | "announcement" | "notification"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1448,80 +1432,6 @@ export namespace Prisma {
           count: {
             args: Prisma.ApplicationCountArgs<ExtArgs>
             result: $Utils.Optional<ApplicationCountAggregateOutputType> | number
-          }
-        }
-      }
-      WorkExperience: {
-        payload: Prisma.$WorkExperiencePayload<ExtArgs>
-        fields: Prisma.WorkExperienceFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.WorkExperienceFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorkExperiencePayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.WorkExperienceFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorkExperiencePayload>
-          }
-          findFirst: {
-            args: Prisma.WorkExperienceFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorkExperiencePayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.WorkExperienceFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorkExperiencePayload>
-          }
-          findMany: {
-            args: Prisma.WorkExperienceFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorkExperiencePayload>[]
-          }
-          create: {
-            args: Prisma.WorkExperienceCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorkExperiencePayload>
-          }
-          createMany: {
-            args: Prisma.WorkExperienceCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.WorkExperienceCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorkExperiencePayload>[]
-          }
-          delete: {
-            args: Prisma.WorkExperienceDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorkExperiencePayload>
-          }
-          update: {
-            args: Prisma.WorkExperienceUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorkExperiencePayload>
-          }
-          deleteMany: {
-            args: Prisma.WorkExperienceDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.WorkExperienceUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.WorkExperienceUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorkExperiencePayload>[]
-          }
-          upsert: {
-            args: Prisma.WorkExperienceUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$WorkExperiencePayload>
-          }
-          aggregate: {
-            args: Prisma.WorkExperienceAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateWorkExperience>
-          }
-          groupBy: {
-            args: Prisma.WorkExperienceGroupByArgs<ExtArgs>
-            result: $Utils.Optional<WorkExperienceGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.WorkExperienceCountArgs<ExtArgs>
-            result: $Utils.Optional<WorkExperienceCountAggregateOutputType> | number
           }
         }
       }
@@ -2060,7 +1970,6 @@ export namespace Prisma {
     program?: ProgramOmit
     category?: CategoryOmit
     application?: ApplicationOmit
-    workExperience?: WorkExperienceOmit
     educationHistory?: EducationHistoryOmit
     payment?: PaymentOmit
     admission?: AdmissionOmit
@@ -2166,7 +2075,6 @@ export namespace Prisma {
     admissions: number
     documents: number
     notifications: number
-    workExperiences: number
     educationHistory: number
   }
 
@@ -2176,7 +2084,6 @@ export namespace Prisma {
     admissions?: boolean | ApplicantCountOutputTypeCountAdmissionsArgs
     documents?: boolean | ApplicantCountOutputTypeCountDocumentsArgs
     notifications?: boolean | ApplicantCountOutputTypeCountNotificationsArgs
-    workExperiences?: boolean | ApplicantCountOutputTypeCountWorkExperiencesArgs
     educationHistory?: boolean | ApplicantCountOutputTypeCountEducationHistoryArgs
   }
 
@@ -2224,13 +2131,6 @@ export namespace Prisma {
    */
   export type ApplicantCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: NotificationWhereInput
-  }
-
-  /**
-   * ApplicantCountOutputType without action
-   */
-  export type ApplicantCountOutputTypeCountWorkExperiencesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: WorkExperienceWhereInput
   }
 
   /**
@@ -2385,12 +2285,10 @@ export namespace Prisma {
 
   export type ApplicationCountOutputType = {
     documents: number
-    workExperiences: number
   }
 
   export type ApplicationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     documents?: boolean | ApplicationCountOutputTypeCountDocumentsArgs
-    workExperiences?: boolean | ApplicationCountOutputTypeCountWorkExperiencesArgs
   }
 
   // Custom InputTypes
@@ -2409,13 +2307,6 @@ export namespace Prisma {
    */
   export type ApplicationCountOutputTypeCountDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DocumentWhereInput
-  }
-
-  /**
-   * ApplicationCountOutputType without action
-   */
-  export type ApplicationCountOutputTypeCountWorkExperiencesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: WorkExperienceWhereInput
   }
 
 
@@ -2849,7 +2740,6 @@ export namespace Prisma {
     admissions?: boolean | Applicant$admissionsArgs<ExtArgs>
     documents?: boolean | Applicant$documentsArgs<ExtArgs>
     notifications?: boolean | Applicant$notificationsArgs<ExtArgs>
-    workExperiences?: boolean | Applicant$workExperiencesArgs<ExtArgs>
     educationHistory?: boolean | Applicant$educationHistoryArgs<ExtArgs>
     _count?: boolean | ApplicantCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["applicant"]>
@@ -2957,7 +2847,6 @@ export namespace Prisma {
     admissions?: boolean | Applicant$admissionsArgs<ExtArgs>
     documents?: boolean | Applicant$documentsArgs<ExtArgs>
     notifications?: boolean | Applicant$notificationsArgs<ExtArgs>
-    workExperiences?: boolean | Applicant$workExperiencesArgs<ExtArgs>
     educationHistory?: boolean | Applicant$educationHistoryArgs<ExtArgs>
     _count?: boolean | ApplicantCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -2972,7 +2861,6 @@ export namespace Prisma {
       admissions: Prisma.$AdmissionPayload<ExtArgs>[]
       documents: Prisma.$DocumentPayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
-      workExperiences: Prisma.$WorkExperiencePayload<ExtArgs>[]
       educationHistory: Prisma.$EducationHistoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -3404,7 +3292,6 @@ export namespace Prisma {
     admissions<T extends Applicant$admissionsArgs<ExtArgs> = {}>(args?: Subset<T, Applicant$admissionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AdmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     documents<T extends Applicant$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Applicant$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notifications<T extends Applicant$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, Applicant$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    workExperiences<T extends Applicant$workExperiencesArgs<ExtArgs> = {}>(args?: Subset<T, Applicant$workExperiencesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkExperiencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     educationHistory<T extends Applicant$educationHistoryArgs<ExtArgs> = {}>(args?: Subset<T, Applicant$educationHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EducationHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3969,30 +3856,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
-  }
-
-  /**
-   * Applicant.workExperiences
-   */
-  export type Applicant$workExperiencesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceInclude<ExtArgs> | null
-    where?: WorkExperienceWhereInput
-    orderBy?: WorkExperienceOrderByWithRelationInput | WorkExperienceOrderByWithRelationInput[]
-    cursor?: WorkExperienceWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: WorkExperienceScalarFieldEnum | WorkExperienceScalarFieldEnum[]
   }
 
   /**
@@ -9636,7 +9499,6 @@ export namespace Prisma {
     basicsComplete: boolean | null
     personalInfoComplete: boolean | null
     educationComplete: boolean | null
-    workExperienceComplete: boolean | null
     programInfoComplete: boolean | null
     documentsComplete: boolean | null
     declarationComplete: boolean | null
@@ -9662,7 +9524,6 @@ export namespace Prisma {
     basicsComplete: boolean | null
     personalInfoComplete: boolean | null
     educationComplete: boolean | null
-    workExperienceComplete: boolean | null
     programInfoComplete: boolean | null
     documentsComplete: boolean | null
     declarationComplete: boolean | null
@@ -9689,7 +9550,6 @@ export namespace Prisma {
     basicsComplete: number
     personalInfoComplete: number
     educationComplete: number
-    workExperienceComplete: number
     programInfoComplete: number
     documentsComplete: number
     declarationComplete: number
@@ -9725,7 +9585,6 @@ export namespace Prisma {
     basicsComplete?: true
     personalInfoComplete?: true
     educationComplete?: true
-    workExperienceComplete?: true
     programInfoComplete?: true
     documentsComplete?: true
     declarationComplete?: true
@@ -9751,7 +9610,6 @@ export namespace Prisma {
     basicsComplete?: true
     personalInfoComplete?: true
     educationComplete?: true
-    workExperienceComplete?: true
     programInfoComplete?: true
     documentsComplete?: true
     declarationComplete?: true
@@ -9778,7 +9636,6 @@ export namespace Prisma {
     basicsComplete?: true
     personalInfoComplete?: true
     educationComplete?: true
-    workExperienceComplete?: true
     programInfoComplete?: true
     documentsComplete?: true
     declarationComplete?: true
@@ -9892,7 +9749,6 @@ export namespace Prisma {
     basicsComplete: boolean
     personalInfoComplete: boolean
     educationComplete: boolean
-    workExperienceComplete: boolean
     programInfoComplete: boolean
     documentsComplete: boolean
     declarationComplete: boolean
@@ -9938,7 +9794,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -9951,7 +9806,6 @@ export namespace Prisma {
     intake?: boolean | Application$intakeArgs<ExtArgs>
     payment?: boolean | Application$paymentArgs<ExtArgs>
     documents?: boolean | Application$documentsArgs<ExtArgs>
-    workExperiences?: boolean | Application$workExperiencesArgs<ExtArgs>
     admission?: boolean | Application$admissionArgs<ExtArgs>
     _count?: boolean | ApplicationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
@@ -9973,7 +9827,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -10003,7 +9856,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -10033,7 +9885,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -10043,14 +9894,13 @@ export namespace Prisma {
     shortCourseDuration?: boolean
   }
 
-  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicantId" | "programId" | "intakeId" | "status" | "notes" | "reviewedBy" | "reviewedAt" | "createdAt" | "updatedAt" | "completedSteps" | "currentStep" | "progress" | "basicsComplete" | "personalInfoComplete" | "educationComplete" | "workExperienceComplete" | "programInfoComplete" | "documentsComplete" | "declarationComplete" | "declarationSigned" | "declarationDate" | "isShortCourse" | "shortCourseDuration", ExtArgs["result"]["application"]>
+  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicantId" | "programId" | "intakeId" | "status" | "notes" | "reviewedBy" | "reviewedAt" | "createdAt" | "updatedAt" | "completedSteps" | "currentStep" | "progress" | "basicsComplete" | "personalInfoComplete" | "educationComplete" | "programInfoComplete" | "documentsComplete" | "declarationComplete" | "declarationSigned" | "declarationDate" | "isShortCourse" | "shortCourseDuration", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     applicant?: boolean | ApplicantDefaultArgs<ExtArgs>
     program?: boolean | ProgramDefaultArgs<ExtArgs>
     intake?: boolean | Application$intakeArgs<ExtArgs>
     payment?: boolean | Application$paymentArgs<ExtArgs>
     documents?: boolean | Application$documentsArgs<ExtArgs>
-    workExperiences?: boolean | Application$workExperiencesArgs<ExtArgs>
     admission?: boolean | Application$admissionArgs<ExtArgs>
     _count?: boolean | ApplicationCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -10073,7 +9923,6 @@ export namespace Prisma {
       intake: Prisma.$IntakePayload<ExtArgs> | null
       payment: Prisma.$PaymentPayload<ExtArgs> | null
       documents: Prisma.$DocumentPayload<ExtArgs>[]
-      workExperiences: Prisma.$WorkExperiencePayload<ExtArgs>[]
       admission: Prisma.$AdmissionPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -10093,7 +9942,6 @@ export namespace Prisma {
       basicsComplete: boolean
       personalInfoComplete: boolean
       educationComplete: boolean
-      workExperienceComplete: boolean
       programInfoComplete: boolean
       documentsComplete: boolean
       declarationComplete: boolean
@@ -10500,7 +10348,6 @@ export namespace Prisma {
     intake<T extends Application$intakeArgs<ExtArgs> = {}>(args?: Subset<T, Application$intakeArgs<ExtArgs>>): Prisma__IntakeClient<$Result.GetResult<Prisma.$IntakePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     payment<T extends Application$paymentArgs<ExtArgs> = {}>(args?: Subset<T, Application$paymentArgs<ExtArgs>>): Prisma__PaymentClient<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     documents<T extends Application$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Application$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    workExperiences<T extends Application$workExperiencesArgs<ExtArgs> = {}>(args?: Subset<T, Application$workExperiencesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkExperiencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     admission<T extends Application$admissionArgs<ExtArgs> = {}>(args?: Subset<T, Application$admissionArgs<ExtArgs>>): Prisma__AdmissionClient<$Result.GetResult<Prisma.$AdmissionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -10547,7 +10394,6 @@ export namespace Prisma {
     readonly basicsComplete: FieldRef<"Application", 'Boolean'>
     readonly personalInfoComplete: FieldRef<"Application", 'Boolean'>
     readonly educationComplete: FieldRef<"Application", 'Boolean'>
-    readonly workExperienceComplete: FieldRef<"Application", 'Boolean'>
     readonly programInfoComplete: FieldRef<"Application", 'Boolean'>
     readonly documentsComplete: FieldRef<"Application", 'Boolean'>
     readonly declarationComplete: FieldRef<"Application", 'Boolean'>
@@ -11013,30 +10859,6 @@ export namespace Prisma {
   }
 
   /**
-   * Application.workExperiences
-   */
-  export type Application$workExperiencesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceInclude<ExtArgs> | null
-    where?: WorkExperienceWhereInput
-    orderBy?: WorkExperienceOrderByWithRelationInput | WorkExperienceOrderByWithRelationInput[]
-    cursor?: WorkExperienceWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: WorkExperienceScalarFieldEnum | WorkExperienceScalarFieldEnum[]
-  }
-
-  /**
    * Application.admission
    */
   export type Application$admissionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11071,1137 +10893,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ApplicationInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model WorkExperience
-   */
-
-  export type AggregateWorkExperience = {
-    _count: WorkExperienceCountAggregateOutputType | null
-    _min: WorkExperienceMinAggregateOutputType | null
-    _max: WorkExperienceMaxAggregateOutputType | null
-  }
-
-  export type WorkExperienceMinAggregateOutputType = {
-    id: string | null
-    applicationId: string | null
-    applicantId: string | null
-    company: string | null
-    position: string | null
-    startDate: Date | null
-    endDate: Date | null
-    description: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type WorkExperienceMaxAggregateOutputType = {
-    id: string | null
-    applicationId: string | null
-    applicantId: string | null
-    company: string | null
-    position: string | null
-    startDate: Date | null
-    endDate: Date | null
-    description: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type WorkExperienceCountAggregateOutputType = {
-    id: number
-    applicationId: number
-    applicantId: number
-    company: number
-    position: number
-    startDate: number
-    endDate: number
-    description: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type WorkExperienceMinAggregateInputType = {
-    id?: true
-    applicationId?: true
-    applicantId?: true
-    company?: true
-    position?: true
-    startDate?: true
-    endDate?: true
-    description?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type WorkExperienceMaxAggregateInputType = {
-    id?: true
-    applicationId?: true
-    applicantId?: true
-    company?: true
-    position?: true
-    startDate?: true
-    endDate?: true
-    description?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type WorkExperienceCountAggregateInputType = {
-    id?: true
-    applicationId?: true
-    applicantId?: true
-    company?: true
-    position?: true
-    startDate?: true
-    endDate?: true
-    description?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type WorkExperienceAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which WorkExperience to aggregate.
-     */
-    where?: WorkExperienceWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of WorkExperiences to fetch.
-     */
-    orderBy?: WorkExperienceOrderByWithRelationInput | WorkExperienceOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: WorkExperienceWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` WorkExperiences from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` WorkExperiences.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned WorkExperiences
-    **/
-    _count?: true | WorkExperienceCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: WorkExperienceMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: WorkExperienceMaxAggregateInputType
-  }
-
-  export type GetWorkExperienceAggregateType<T extends WorkExperienceAggregateArgs> = {
-        [P in keyof T & keyof AggregateWorkExperience]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateWorkExperience[P]>
-      : GetScalarType<T[P], AggregateWorkExperience[P]>
-  }
-
-
-
-
-  export type WorkExperienceGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: WorkExperienceWhereInput
-    orderBy?: WorkExperienceOrderByWithAggregationInput | WorkExperienceOrderByWithAggregationInput[]
-    by: WorkExperienceScalarFieldEnum[] | WorkExperienceScalarFieldEnum
-    having?: WorkExperienceScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: WorkExperienceCountAggregateInputType | true
-    _min?: WorkExperienceMinAggregateInputType
-    _max?: WorkExperienceMaxAggregateInputType
-  }
-
-  export type WorkExperienceGroupByOutputType = {
-    id: string
-    applicationId: string
-    applicantId: string
-    company: string
-    position: string
-    startDate: Date
-    endDate: Date | null
-    description: string
-    createdAt: Date
-    updatedAt: Date
-    _count: WorkExperienceCountAggregateOutputType | null
-    _min: WorkExperienceMinAggregateOutputType | null
-    _max: WorkExperienceMaxAggregateOutputType | null
-  }
-
-  type GetWorkExperienceGroupByPayload<T extends WorkExperienceGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<WorkExperienceGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof WorkExperienceGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], WorkExperienceGroupByOutputType[P]>
-            : GetScalarType<T[P], WorkExperienceGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type WorkExperienceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    applicationId?: boolean
-    applicantId?: boolean
-    company?: boolean
-    position?: boolean
-    startDate?: boolean
-    endDate?: boolean
-    description?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    application?: boolean | ApplicationDefaultArgs<ExtArgs>
-    applicant?: boolean | ApplicantDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["workExperience"]>
-
-  export type WorkExperienceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    applicationId?: boolean
-    applicantId?: boolean
-    company?: boolean
-    position?: boolean
-    startDate?: boolean
-    endDate?: boolean
-    description?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    application?: boolean | ApplicationDefaultArgs<ExtArgs>
-    applicant?: boolean | ApplicantDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["workExperience"]>
-
-  export type WorkExperienceSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    applicationId?: boolean
-    applicantId?: boolean
-    company?: boolean
-    position?: boolean
-    startDate?: boolean
-    endDate?: boolean
-    description?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    application?: boolean | ApplicationDefaultArgs<ExtArgs>
-    applicant?: boolean | ApplicantDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["workExperience"]>
-
-  export type WorkExperienceSelectScalar = {
-    id?: boolean
-    applicationId?: boolean
-    applicantId?: boolean
-    company?: boolean
-    position?: boolean
-    startDate?: boolean
-    endDate?: boolean
-    description?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type WorkExperienceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationId" | "applicantId" | "company" | "position" | "startDate" | "endDate" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["workExperience"]>
-  export type WorkExperienceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    application?: boolean | ApplicationDefaultArgs<ExtArgs>
-    applicant?: boolean | ApplicantDefaultArgs<ExtArgs>
-  }
-  export type WorkExperienceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    application?: boolean | ApplicationDefaultArgs<ExtArgs>
-    applicant?: boolean | ApplicantDefaultArgs<ExtArgs>
-  }
-  export type WorkExperienceIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    application?: boolean | ApplicationDefaultArgs<ExtArgs>
-    applicant?: boolean | ApplicantDefaultArgs<ExtArgs>
-  }
-
-  export type $WorkExperiencePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "WorkExperience"
-    objects: {
-      application: Prisma.$ApplicationPayload<ExtArgs>
-      applicant: Prisma.$ApplicantPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      applicationId: string
-      applicantId: string
-      company: string
-      position: string
-      startDate: Date
-      endDate: Date | null
-      description: string
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["workExperience"]>
-    composites: {}
-  }
-
-  type WorkExperienceGetPayload<S extends boolean | null | undefined | WorkExperienceDefaultArgs> = $Result.GetResult<Prisma.$WorkExperiencePayload, S>
-
-  type WorkExperienceCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<WorkExperienceFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: WorkExperienceCountAggregateInputType | true
-    }
-
-  export interface WorkExperienceDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['WorkExperience'], meta: { name: 'WorkExperience' } }
-    /**
-     * Find zero or one WorkExperience that matches the filter.
-     * @param {WorkExperienceFindUniqueArgs} args - Arguments to find a WorkExperience
-     * @example
-     * // Get one WorkExperience
-     * const workExperience = await prisma.workExperience.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends WorkExperienceFindUniqueArgs>(args: SelectSubset<T, WorkExperienceFindUniqueArgs<ExtArgs>>): Prisma__WorkExperienceClient<$Result.GetResult<Prisma.$WorkExperiencePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one WorkExperience that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {WorkExperienceFindUniqueOrThrowArgs} args - Arguments to find a WorkExperience
-     * @example
-     * // Get one WorkExperience
-     * const workExperience = await prisma.workExperience.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends WorkExperienceFindUniqueOrThrowArgs>(args: SelectSubset<T, WorkExperienceFindUniqueOrThrowArgs<ExtArgs>>): Prisma__WorkExperienceClient<$Result.GetResult<Prisma.$WorkExperiencePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first WorkExperience that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorkExperienceFindFirstArgs} args - Arguments to find a WorkExperience
-     * @example
-     * // Get one WorkExperience
-     * const workExperience = await prisma.workExperience.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends WorkExperienceFindFirstArgs>(args?: SelectSubset<T, WorkExperienceFindFirstArgs<ExtArgs>>): Prisma__WorkExperienceClient<$Result.GetResult<Prisma.$WorkExperiencePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first WorkExperience that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorkExperienceFindFirstOrThrowArgs} args - Arguments to find a WorkExperience
-     * @example
-     * // Get one WorkExperience
-     * const workExperience = await prisma.workExperience.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends WorkExperienceFindFirstOrThrowArgs>(args?: SelectSubset<T, WorkExperienceFindFirstOrThrowArgs<ExtArgs>>): Prisma__WorkExperienceClient<$Result.GetResult<Prisma.$WorkExperiencePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more WorkExperiences that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorkExperienceFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all WorkExperiences
-     * const workExperiences = await prisma.workExperience.findMany()
-     * 
-     * // Get first 10 WorkExperiences
-     * const workExperiences = await prisma.workExperience.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const workExperienceWithIdOnly = await prisma.workExperience.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends WorkExperienceFindManyArgs>(args?: SelectSubset<T, WorkExperienceFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkExperiencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a WorkExperience.
-     * @param {WorkExperienceCreateArgs} args - Arguments to create a WorkExperience.
-     * @example
-     * // Create one WorkExperience
-     * const WorkExperience = await prisma.workExperience.create({
-     *   data: {
-     *     // ... data to create a WorkExperience
-     *   }
-     * })
-     * 
-     */
-    create<T extends WorkExperienceCreateArgs>(args: SelectSubset<T, WorkExperienceCreateArgs<ExtArgs>>): Prisma__WorkExperienceClient<$Result.GetResult<Prisma.$WorkExperiencePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many WorkExperiences.
-     * @param {WorkExperienceCreateManyArgs} args - Arguments to create many WorkExperiences.
-     * @example
-     * // Create many WorkExperiences
-     * const workExperience = await prisma.workExperience.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends WorkExperienceCreateManyArgs>(args?: SelectSubset<T, WorkExperienceCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many WorkExperiences and returns the data saved in the database.
-     * @param {WorkExperienceCreateManyAndReturnArgs} args - Arguments to create many WorkExperiences.
-     * @example
-     * // Create many WorkExperiences
-     * const workExperience = await prisma.workExperience.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many WorkExperiences and only return the `id`
-     * const workExperienceWithIdOnly = await prisma.workExperience.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends WorkExperienceCreateManyAndReturnArgs>(args?: SelectSubset<T, WorkExperienceCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkExperiencePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a WorkExperience.
-     * @param {WorkExperienceDeleteArgs} args - Arguments to delete one WorkExperience.
-     * @example
-     * // Delete one WorkExperience
-     * const WorkExperience = await prisma.workExperience.delete({
-     *   where: {
-     *     // ... filter to delete one WorkExperience
-     *   }
-     * })
-     * 
-     */
-    delete<T extends WorkExperienceDeleteArgs>(args: SelectSubset<T, WorkExperienceDeleteArgs<ExtArgs>>): Prisma__WorkExperienceClient<$Result.GetResult<Prisma.$WorkExperiencePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one WorkExperience.
-     * @param {WorkExperienceUpdateArgs} args - Arguments to update one WorkExperience.
-     * @example
-     * // Update one WorkExperience
-     * const workExperience = await prisma.workExperience.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends WorkExperienceUpdateArgs>(args: SelectSubset<T, WorkExperienceUpdateArgs<ExtArgs>>): Prisma__WorkExperienceClient<$Result.GetResult<Prisma.$WorkExperiencePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more WorkExperiences.
-     * @param {WorkExperienceDeleteManyArgs} args - Arguments to filter WorkExperiences to delete.
-     * @example
-     * // Delete a few WorkExperiences
-     * const { count } = await prisma.workExperience.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends WorkExperienceDeleteManyArgs>(args?: SelectSubset<T, WorkExperienceDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more WorkExperiences.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorkExperienceUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many WorkExperiences
-     * const workExperience = await prisma.workExperience.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends WorkExperienceUpdateManyArgs>(args: SelectSubset<T, WorkExperienceUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more WorkExperiences and returns the data updated in the database.
-     * @param {WorkExperienceUpdateManyAndReturnArgs} args - Arguments to update many WorkExperiences.
-     * @example
-     * // Update many WorkExperiences
-     * const workExperience = await prisma.workExperience.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more WorkExperiences and only return the `id`
-     * const workExperienceWithIdOnly = await prisma.workExperience.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends WorkExperienceUpdateManyAndReturnArgs>(args: SelectSubset<T, WorkExperienceUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkExperiencePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one WorkExperience.
-     * @param {WorkExperienceUpsertArgs} args - Arguments to update or create a WorkExperience.
-     * @example
-     * // Update or create a WorkExperience
-     * const workExperience = await prisma.workExperience.upsert({
-     *   create: {
-     *     // ... data to create a WorkExperience
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the WorkExperience we want to update
-     *   }
-     * })
-     */
-    upsert<T extends WorkExperienceUpsertArgs>(args: SelectSubset<T, WorkExperienceUpsertArgs<ExtArgs>>): Prisma__WorkExperienceClient<$Result.GetResult<Prisma.$WorkExperiencePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of WorkExperiences.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorkExperienceCountArgs} args - Arguments to filter WorkExperiences to count.
-     * @example
-     * // Count the number of WorkExperiences
-     * const count = await prisma.workExperience.count({
-     *   where: {
-     *     // ... the filter for the WorkExperiences we want to count
-     *   }
-     * })
-    **/
-    count<T extends WorkExperienceCountArgs>(
-      args?: Subset<T, WorkExperienceCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], WorkExperienceCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a WorkExperience.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorkExperienceAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends WorkExperienceAggregateArgs>(args: Subset<T, WorkExperienceAggregateArgs>): Prisma.PrismaPromise<GetWorkExperienceAggregateType<T>>
-
-    /**
-     * Group by WorkExperience.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {WorkExperienceGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends WorkExperienceGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: WorkExperienceGroupByArgs['orderBy'] }
-        : { orderBy?: WorkExperienceGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, WorkExperienceGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetWorkExperienceGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the WorkExperience model
-   */
-  readonly fields: WorkExperienceFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for WorkExperience.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__WorkExperienceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    application<T extends ApplicationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ApplicationDefaultArgs<ExtArgs>>): Prisma__ApplicationClient<$Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    applicant<T extends ApplicantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ApplicantDefaultArgs<ExtArgs>>): Prisma__ApplicantClient<$Result.GetResult<Prisma.$ApplicantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the WorkExperience model
-   */
-  interface WorkExperienceFieldRefs {
-    readonly id: FieldRef<"WorkExperience", 'String'>
-    readonly applicationId: FieldRef<"WorkExperience", 'String'>
-    readonly applicantId: FieldRef<"WorkExperience", 'String'>
-    readonly company: FieldRef<"WorkExperience", 'String'>
-    readonly position: FieldRef<"WorkExperience", 'String'>
-    readonly startDate: FieldRef<"WorkExperience", 'DateTime'>
-    readonly endDate: FieldRef<"WorkExperience", 'DateTime'>
-    readonly description: FieldRef<"WorkExperience", 'String'>
-    readonly createdAt: FieldRef<"WorkExperience", 'DateTime'>
-    readonly updatedAt: FieldRef<"WorkExperience", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * WorkExperience findUnique
-   */
-  export type WorkExperienceFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceInclude<ExtArgs> | null
-    /**
-     * Filter, which WorkExperience to fetch.
-     */
-    where: WorkExperienceWhereUniqueInput
-  }
-
-  /**
-   * WorkExperience findUniqueOrThrow
-   */
-  export type WorkExperienceFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceInclude<ExtArgs> | null
-    /**
-     * Filter, which WorkExperience to fetch.
-     */
-    where: WorkExperienceWhereUniqueInput
-  }
-
-  /**
-   * WorkExperience findFirst
-   */
-  export type WorkExperienceFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceInclude<ExtArgs> | null
-    /**
-     * Filter, which WorkExperience to fetch.
-     */
-    where?: WorkExperienceWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of WorkExperiences to fetch.
-     */
-    orderBy?: WorkExperienceOrderByWithRelationInput | WorkExperienceOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for WorkExperiences.
-     */
-    cursor?: WorkExperienceWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` WorkExperiences from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` WorkExperiences.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of WorkExperiences.
-     */
-    distinct?: WorkExperienceScalarFieldEnum | WorkExperienceScalarFieldEnum[]
-  }
-
-  /**
-   * WorkExperience findFirstOrThrow
-   */
-  export type WorkExperienceFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceInclude<ExtArgs> | null
-    /**
-     * Filter, which WorkExperience to fetch.
-     */
-    where?: WorkExperienceWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of WorkExperiences to fetch.
-     */
-    orderBy?: WorkExperienceOrderByWithRelationInput | WorkExperienceOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for WorkExperiences.
-     */
-    cursor?: WorkExperienceWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` WorkExperiences from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` WorkExperiences.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of WorkExperiences.
-     */
-    distinct?: WorkExperienceScalarFieldEnum | WorkExperienceScalarFieldEnum[]
-  }
-
-  /**
-   * WorkExperience findMany
-   */
-  export type WorkExperienceFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceInclude<ExtArgs> | null
-    /**
-     * Filter, which WorkExperiences to fetch.
-     */
-    where?: WorkExperienceWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of WorkExperiences to fetch.
-     */
-    orderBy?: WorkExperienceOrderByWithRelationInput | WorkExperienceOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing WorkExperiences.
-     */
-    cursor?: WorkExperienceWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` WorkExperiences from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` WorkExperiences.
-     */
-    skip?: number
-    distinct?: WorkExperienceScalarFieldEnum | WorkExperienceScalarFieldEnum[]
-  }
-
-  /**
-   * WorkExperience create
-   */
-  export type WorkExperienceCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceInclude<ExtArgs> | null
-    /**
-     * The data needed to create a WorkExperience.
-     */
-    data: XOR<WorkExperienceCreateInput, WorkExperienceUncheckedCreateInput>
-  }
-
-  /**
-   * WorkExperience createMany
-   */
-  export type WorkExperienceCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many WorkExperiences.
-     */
-    data: WorkExperienceCreateManyInput | WorkExperienceCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * WorkExperience createManyAndReturn
-   */
-  export type WorkExperienceCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * The data used to create many WorkExperiences.
-     */
-    data: WorkExperienceCreateManyInput | WorkExperienceCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * WorkExperience update
-   */
-  export type WorkExperienceUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceInclude<ExtArgs> | null
-    /**
-     * The data needed to update a WorkExperience.
-     */
-    data: XOR<WorkExperienceUpdateInput, WorkExperienceUncheckedUpdateInput>
-    /**
-     * Choose, which WorkExperience to update.
-     */
-    where: WorkExperienceWhereUniqueInput
-  }
-
-  /**
-   * WorkExperience updateMany
-   */
-  export type WorkExperienceUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update WorkExperiences.
-     */
-    data: XOR<WorkExperienceUpdateManyMutationInput, WorkExperienceUncheckedUpdateManyInput>
-    /**
-     * Filter which WorkExperiences to update
-     */
-    where?: WorkExperienceWhereInput
-    /**
-     * Limit how many WorkExperiences to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * WorkExperience updateManyAndReturn
-   */
-  export type WorkExperienceUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * The data used to update WorkExperiences.
-     */
-    data: XOR<WorkExperienceUpdateManyMutationInput, WorkExperienceUncheckedUpdateManyInput>
-    /**
-     * Filter which WorkExperiences to update
-     */
-    where?: WorkExperienceWhereInput
-    /**
-     * Limit how many WorkExperiences to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * WorkExperience upsert
-   */
-  export type WorkExperienceUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceInclude<ExtArgs> | null
-    /**
-     * The filter to search for the WorkExperience to update in case it exists.
-     */
-    where: WorkExperienceWhereUniqueInput
-    /**
-     * In case the WorkExperience found by the `where` argument doesn't exist, create a new WorkExperience with this data.
-     */
-    create: XOR<WorkExperienceCreateInput, WorkExperienceUncheckedCreateInput>
-    /**
-     * In case the WorkExperience was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<WorkExperienceUpdateInput, WorkExperienceUncheckedUpdateInput>
-  }
-
-  /**
-   * WorkExperience delete
-   */
-  export type WorkExperienceDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceInclude<ExtArgs> | null
-    /**
-     * Filter which WorkExperience to delete.
-     */
-    where: WorkExperienceWhereUniqueInput
-  }
-
-  /**
-   * WorkExperience deleteMany
-   */
-  export type WorkExperienceDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which WorkExperiences to delete
-     */
-    where?: WorkExperienceWhereInput
-    /**
-     * Limit how many WorkExperiences to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * WorkExperience without action
-   */
-  export type WorkExperienceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the WorkExperience
-     */
-    select?: WorkExperienceSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the WorkExperience
-     */
-    omit?: WorkExperienceOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: WorkExperienceInclude<ExtArgs> | null
   }
 
 
@@ -19171,7 +17862,6 @@ export namespace Prisma {
     basicsComplete: 'basicsComplete',
     personalInfoComplete: 'personalInfoComplete',
     educationComplete: 'educationComplete',
-    workExperienceComplete: 'workExperienceComplete',
     programInfoComplete: 'programInfoComplete',
     documentsComplete: 'documentsComplete',
     declarationComplete: 'declarationComplete',
@@ -19182,22 +17872,6 @@ export namespace Prisma {
   };
 
   export type ApplicationScalarFieldEnum = (typeof ApplicationScalarFieldEnum)[keyof typeof ApplicationScalarFieldEnum]
-
-
-  export const WorkExperienceScalarFieldEnum: {
-    id: 'id',
-    applicationId: 'applicationId',
-    applicantId: 'applicantId',
-    company: 'company',
-    position: 'position',
-    startDate: 'startDate',
-    endDate: 'endDate',
-    description: 'description',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type WorkExperienceScalarFieldEnum = (typeof WorkExperienceScalarFieldEnum)[keyof typeof WorkExperienceScalarFieldEnum]
 
 
   export const EducationHistoryScalarFieldEnum: {
@@ -19520,7 +18194,6 @@ export namespace Prisma {
     admissions?: AdmissionListRelationFilter
     documents?: DocumentListRelationFilter
     notifications?: NotificationListRelationFilter
-    workExperiences?: WorkExperienceListRelationFilter
     educationHistory?: EducationHistoryListRelationFilter
   }
 
@@ -19559,7 +18232,6 @@ export namespace Prisma {
     admissions?: AdmissionOrderByRelationAggregateInput
     documents?: DocumentOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
-    workExperiences?: WorkExperienceOrderByRelationAggregateInput
     educationHistory?: EducationHistoryOrderByRelationAggregateInput
   }
 
@@ -19601,7 +18273,6 @@ export namespace Prisma {
     admissions?: AdmissionListRelationFilter
     documents?: DocumentListRelationFilter
     notifications?: NotificationListRelationFilter
-    workExperiences?: WorkExperienceListRelationFilter
     educationHistory?: EducationHistoryListRelationFilter
   }, "id" | "email" | "phone">
 
@@ -20025,7 +18696,6 @@ export namespace Prisma {
     basicsComplete?: BoolFilter<"Application"> | boolean
     personalInfoComplete?: BoolFilter<"Application"> | boolean
     educationComplete?: BoolFilter<"Application"> | boolean
-    workExperienceComplete?: BoolFilter<"Application"> | boolean
     programInfoComplete?: BoolFilter<"Application"> | boolean
     documentsComplete?: BoolFilter<"Application"> | boolean
     declarationComplete?: BoolFilter<"Application"> | boolean
@@ -20038,7 +18708,6 @@ export namespace Prisma {
     intake?: XOR<IntakeNullableScalarRelationFilter, IntakeWhereInput> | null
     payment?: XOR<PaymentNullableScalarRelationFilter, PaymentWhereInput> | null
     documents?: DocumentListRelationFilter
-    workExperiences?: WorkExperienceListRelationFilter
     admission?: XOR<AdmissionNullableScalarRelationFilter, AdmissionWhereInput> | null
   }
 
@@ -20059,7 +18728,6 @@ export namespace Prisma {
     basicsComplete?: SortOrder
     personalInfoComplete?: SortOrder
     educationComplete?: SortOrder
-    workExperienceComplete?: SortOrder
     programInfoComplete?: SortOrder
     documentsComplete?: SortOrder
     declarationComplete?: SortOrder
@@ -20072,7 +18740,6 @@ export namespace Prisma {
     intake?: IntakeOrderByWithRelationInput
     payment?: PaymentOrderByWithRelationInput
     documents?: DocumentOrderByRelationAggregateInput
-    workExperiences?: WorkExperienceOrderByRelationAggregateInput
     admission?: AdmissionOrderByWithRelationInput
   }
 
@@ -20096,7 +18763,6 @@ export namespace Prisma {
     basicsComplete?: BoolFilter<"Application"> | boolean
     personalInfoComplete?: BoolFilter<"Application"> | boolean
     educationComplete?: BoolFilter<"Application"> | boolean
-    workExperienceComplete?: BoolFilter<"Application"> | boolean
     programInfoComplete?: BoolFilter<"Application"> | boolean
     documentsComplete?: BoolFilter<"Application"> | boolean
     declarationComplete?: BoolFilter<"Application"> | boolean
@@ -20109,7 +18775,6 @@ export namespace Prisma {
     intake?: XOR<IntakeNullableScalarRelationFilter, IntakeWhereInput> | null
     payment?: XOR<PaymentNullableScalarRelationFilter, PaymentWhereInput> | null
     documents?: DocumentListRelationFilter
-    workExperiences?: WorkExperienceListRelationFilter
     admission?: XOR<AdmissionNullableScalarRelationFilter, AdmissionWhereInput> | null
   }, "id">
 
@@ -20130,7 +18795,6 @@ export namespace Prisma {
     basicsComplete?: SortOrder
     personalInfoComplete?: SortOrder
     educationComplete?: SortOrder
-    workExperienceComplete?: SortOrder
     programInfoComplete?: SortOrder
     documentsComplete?: SortOrder
     declarationComplete?: SortOrder
@@ -20165,7 +18829,6 @@ export namespace Prisma {
     basicsComplete?: BoolWithAggregatesFilter<"Application"> | boolean
     personalInfoComplete?: BoolWithAggregatesFilter<"Application"> | boolean
     educationComplete?: BoolWithAggregatesFilter<"Application"> | boolean
-    workExperienceComplete?: BoolWithAggregatesFilter<"Application"> | boolean
     programInfoComplete?: BoolWithAggregatesFilter<"Application"> | boolean
     documentsComplete?: BoolWithAggregatesFilter<"Application"> | boolean
     declarationComplete?: BoolWithAggregatesFilter<"Application"> | boolean
@@ -20173,89 +18836,6 @@ export namespace Prisma {
     declarationDate?: DateTimeNullableWithAggregatesFilter<"Application"> | Date | string | null
     isShortCourse?: BoolWithAggregatesFilter<"Application"> | boolean
     shortCourseDuration?: StringNullableWithAggregatesFilter<"Application"> | string | null
-  }
-
-  export type WorkExperienceWhereInput = {
-    AND?: WorkExperienceWhereInput | WorkExperienceWhereInput[]
-    OR?: WorkExperienceWhereInput[]
-    NOT?: WorkExperienceWhereInput | WorkExperienceWhereInput[]
-    id?: StringFilter<"WorkExperience"> | string
-    applicationId?: StringFilter<"WorkExperience"> | string
-    applicantId?: StringFilter<"WorkExperience"> | string
-    company?: StringFilter<"WorkExperience"> | string
-    position?: StringFilter<"WorkExperience"> | string
-    startDate?: DateTimeFilter<"WorkExperience"> | Date | string
-    endDate?: DateTimeNullableFilter<"WorkExperience"> | Date | string | null
-    description?: StringFilter<"WorkExperience"> | string
-    createdAt?: DateTimeFilter<"WorkExperience"> | Date | string
-    updatedAt?: DateTimeFilter<"WorkExperience"> | Date | string
-    application?: XOR<ApplicationScalarRelationFilter, ApplicationWhereInput>
-    applicant?: XOR<ApplicantScalarRelationFilter, ApplicantWhereInput>
-  }
-
-  export type WorkExperienceOrderByWithRelationInput = {
-    id?: SortOrder
-    applicationId?: SortOrder
-    applicantId?: SortOrder
-    company?: SortOrder
-    position?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrderInput | SortOrder
-    description?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    application?: ApplicationOrderByWithRelationInput
-    applicant?: ApplicantOrderByWithRelationInput
-  }
-
-  export type WorkExperienceWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: WorkExperienceWhereInput | WorkExperienceWhereInput[]
-    OR?: WorkExperienceWhereInput[]
-    NOT?: WorkExperienceWhereInput | WorkExperienceWhereInput[]
-    applicationId?: StringFilter<"WorkExperience"> | string
-    applicantId?: StringFilter<"WorkExperience"> | string
-    company?: StringFilter<"WorkExperience"> | string
-    position?: StringFilter<"WorkExperience"> | string
-    startDate?: DateTimeFilter<"WorkExperience"> | Date | string
-    endDate?: DateTimeNullableFilter<"WorkExperience"> | Date | string | null
-    description?: StringFilter<"WorkExperience"> | string
-    createdAt?: DateTimeFilter<"WorkExperience"> | Date | string
-    updatedAt?: DateTimeFilter<"WorkExperience"> | Date | string
-    application?: XOR<ApplicationScalarRelationFilter, ApplicationWhereInput>
-    applicant?: XOR<ApplicantScalarRelationFilter, ApplicantWhereInput>
-  }, "id">
-
-  export type WorkExperienceOrderByWithAggregationInput = {
-    id?: SortOrder
-    applicationId?: SortOrder
-    applicantId?: SortOrder
-    company?: SortOrder
-    position?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrderInput | SortOrder
-    description?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: WorkExperienceCountOrderByAggregateInput
-    _max?: WorkExperienceMaxOrderByAggregateInput
-    _min?: WorkExperienceMinOrderByAggregateInput
-  }
-
-  export type WorkExperienceScalarWhereWithAggregatesInput = {
-    AND?: WorkExperienceScalarWhereWithAggregatesInput | WorkExperienceScalarWhereWithAggregatesInput[]
-    OR?: WorkExperienceScalarWhereWithAggregatesInput[]
-    NOT?: WorkExperienceScalarWhereWithAggregatesInput | WorkExperienceScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"WorkExperience"> | string
-    applicationId?: StringWithAggregatesFilter<"WorkExperience"> | string
-    applicantId?: StringWithAggregatesFilter<"WorkExperience"> | string
-    company?: StringWithAggregatesFilter<"WorkExperience"> | string
-    position?: StringWithAggregatesFilter<"WorkExperience"> | string
-    startDate?: DateTimeWithAggregatesFilter<"WorkExperience"> | Date | string
-    endDate?: DateTimeNullableWithAggregatesFilter<"WorkExperience"> | Date | string | null
-    description?: StringWithAggregatesFilter<"WorkExperience"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"WorkExperience"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"WorkExperience"> | Date | string
   }
 
   export type EducationHistoryWhereInput = {
@@ -20757,7 +19337,6 @@ export namespace Prisma {
     admissions?: AdmissionCreateNestedManyWithoutApplicantInput
     documents?: DocumentCreateNestedManyWithoutApplicantInput
     notifications?: NotificationCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicantInput
     educationHistory?: EducationHistoryCreateNestedManyWithoutApplicantInput
   }
 
@@ -20796,7 +19375,6 @@ export namespace Prisma {
     admissions?: AdmissionUncheckedCreateNestedManyWithoutApplicantInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicantInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicantInput
     educationHistory?: EducationHistoryUncheckedCreateNestedManyWithoutApplicantInput
   }
 
@@ -20835,7 +19413,6 @@ export namespace Prisma {
     admissions?: AdmissionUpdateManyWithoutApplicantNestedInput
     documents?: DocumentUpdateManyWithoutApplicantNestedInput
     notifications?: NotificationUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicantNestedInput
     educationHistory?: EducationHistoryUpdateManyWithoutApplicantNestedInput
   }
 
@@ -20874,7 +19451,6 @@ export namespace Prisma {
     admissions?: AdmissionUncheckedUpdateManyWithoutApplicantNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicantNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicantNestedInput
     educationHistory?: EducationHistoryUncheckedUpdateManyWithoutApplicantNestedInput
   }
 
@@ -21348,7 +19924,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -21361,7 +19936,6 @@ export namespace Prisma {
     intake?: IntakeCreateNestedOneWithoutApplicationsInput
     payment?: PaymentCreateNestedOneWithoutApplicationInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicationInput
     admission?: AdmissionCreateNestedOneWithoutApplicationInput
   }
 
@@ -21382,7 +19956,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -21392,7 +19965,6 @@ export namespace Prisma {
     shortCourseDuration?: string | null
     payment?: PaymentUncheckedCreateNestedOneWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicationInput
     admission?: AdmissionUncheckedCreateNestedOneWithoutApplicationInput
   }
 
@@ -21410,7 +19982,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -21423,7 +19994,6 @@ export namespace Prisma {
     intake?: IntakeUpdateOneWithoutApplicationsNestedInput
     payment?: PaymentUpdateOneWithoutApplicationNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicationNestedInput
     admission?: AdmissionUpdateOneWithoutApplicationNestedInput
   }
 
@@ -21444,7 +20014,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -21454,7 +20023,6 @@ export namespace Prisma {
     shortCourseDuration?: NullableStringFieldUpdateOperationsInput | string | null
     payment?: PaymentUncheckedUpdateOneWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicationNestedInput
     admission?: AdmissionUncheckedUpdateOneWithoutApplicationNestedInput
   }
 
@@ -21475,7 +20043,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -21499,7 +20066,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -21526,7 +20092,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -21534,95 +20099,6 @@ export namespace Prisma {
     declarationDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isShortCourse?: BoolFieldUpdateOperationsInput | boolean
     shortCourseDuration?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type WorkExperienceCreateInput = {
-    id?: string
-    company: string
-    position: string
-    startDate: Date | string
-    endDate?: Date | string | null
-    description: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    application: ApplicationCreateNestedOneWithoutWorkExperiencesInput
-    applicant: ApplicantCreateNestedOneWithoutWorkExperiencesInput
-  }
-
-  export type WorkExperienceUncheckedCreateInput = {
-    id?: string
-    applicationId: string
-    applicantId: string
-    company: string
-    position: string
-    startDate: Date | string
-    endDate?: Date | string | null
-    description: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type WorkExperienceUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    company?: StringFieldUpdateOperationsInput | string
-    position?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    description?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    application?: ApplicationUpdateOneRequiredWithoutWorkExperiencesNestedInput
-    applicant?: ApplicantUpdateOneRequiredWithoutWorkExperiencesNestedInput
-  }
-
-  export type WorkExperienceUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    applicationId?: StringFieldUpdateOperationsInput | string
-    applicantId?: StringFieldUpdateOperationsInput | string
-    company?: StringFieldUpdateOperationsInput | string
-    position?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    description?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type WorkExperienceCreateManyInput = {
-    id?: string
-    applicationId: string
-    applicantId: string
-    company: string
-    position: string
-    startDate: Date | string
-    endDate?: Date | string | null
-    description: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type WorkExperienceUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    company?: StringFieldUpdateOperationsInput | string
-    position?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    description?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type WorkExperienceUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    applicationId?: StringFieldUpdateOperationsInput | string
-    applicantId?: StringFieldUpdateOperationsInput | string
-    company?: StringFieldUpdateOperationsInput | string
-    position?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    description?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type EducationHistoryCreateInput = {
@@ -22209,12 +20685,6 @@ export namespace Prisma {
     none?: NotificationWhereInput
   }
 
-  export type WorkExperienceListRelationFilter = {
-    every?: WorkExperienceWhereInput
-    some?: WorkExperienceWhereInput
-    none?: WorkExperienceWhereInput
-  }
-
   export type EducationHistoryListRelationFilter = {
     every?: EducationHistoryWhereInput
     some?: EducationHistoryWhereInput
@@ -22243,10 +20713,6 @@ export namespace Prisma {
   }
 
   export type NotificationOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type WorkExperienceOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -22786,7 +21252,6 @@ export namespace Prisma {
     basicsComplete?: SortOrder
     personalInfoComplete?: SortOrder
     educationComplete?: SortOrder
-    workExperienceComplete?: SortOrder
     programInfoComplete?: SortOrder
     documentsComplete?: SortOrder
     declarationComplete?: SortOrder
@@ -22816,7 +21281,6 @@ export namespace Prisma {
     basicsComplete?: SortOrder
     personalInfoComplete?: SortOrder
     educationComplete?: SortOrder
-    workExperienceComplete?: SortOrder
     programInfoComplete?: SortOrder
     documentsComplete?: SortOrder
     declarationComplete?: SortOrder
@@ -22842,7 +21306,6 @@ export namespace Prisma {
     basicsComplete?: SortOrder
     personalInfoComplete?: SortOrder
     educationComplete?: SortOrder
-    workExperienceComplete?: SortOrder
     programInfoComplete?: SortOrder
     documentsComplete?: SortOrder
     declarationComplete?: SortOrder
@@ -22864,50 +21327,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumApplicationStatusFilter<$PrismaModel>
     _max?: NestedEnumApplicationStatusFilter<$PrismaModel>
-  }
-
-  export type ApplicationScalarRelationFilter = {
-    is?: ApplicationWhereInput
-    isNot?: ApplicationWhereInput
-  }
-
-  export type WorkExperienceCountOrderByAggregateInput = {
-    id?: SortOrder
-    applicationId?: SortOrder
-    applicantId?: SortOrder
-    company?: SortOrder
-    position?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrder
-    description?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type WorkExperienceMaxOrderByAggregateInput = {
-    id?: SortOrder
-    applicationId?: SortOrder
-    applicantId?: SortOrder
-    company?: SortOrder
-    position?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrder
-    description?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type WorkExperienceMinOrderByAggregateInput = {
-    id?: SortOrder
-    applicationId?: SortOrder
-    applicantId?: SortOrder
-    company?: SortOrder
-    position?: SortOrder
-    startDate?: SortOrder
-    endDate?: SortOrder
-    description?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
   export type IntNullableFilter<$PrismaModel = never> = {
@@ -22992,6 +21411,11 @@ export namespace Prisma {
     in?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.PaymentStatus[] | ListEnumPaymentStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumPaymentStatusFilter<$PrismaModel> | $Enums.PaymentStatus
+  }
+
+  export type ApplicationScalarRelationFilter = {
+    is?: ApplicationWhereInput
+    isNot?: ApplicationWhereInput
   }
 
   export type PaymentCountOrderByAggregateInput = {
@@ -23293,13 +21717,6 @@ export namespace Prisma {
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
   }
 
-  export type WorkExperienceCreateNestedManyWithoutApplicantInput = {
-    create?: XOR<WorkExperienceCreateWithoutApplicantInput, WorkExperienceUncheckedCreateWithoutApplicantInput> | WorkExperienceCreateWithoutApplicantInput[] | WorkExperienceUncheckedCreateWithoutApplicantInput[]
-    connectOrCreate?: WorkExperienceCreateOrConnectWithoutApplicantInput | WorkExperienceCreateOrConnectWithoutApplicantInput[]
-    createMany?: WorkExperienceCreateManyApplicantInputEnvelope
-    connect?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-  }
-
   export type EducationHistoryCreateNestedManyWithoutApplicantInput = {
     create?: XOR<EducationHistoryCreateWithoutApplicantInput, EducationHistoryUncheckedCreateWithoutApplicantInput> | EducationHistoryCreateWithoutApplicantInput[] | EducationHistoryUncheckedCreateWithoutApplicantInput[]
     connectOrCreate?: EducationHistoryCreateOrConnectWithoutApplicantInput | EducationHistoryCreateOrConnectWithoutApplicantInput[]
@@ -23340,13 +21757,6 @@ export namespace Prisma {
     connectOrCreate?: NotificationCreateOrConnectWithoutApplicantInput | NotificationCreateOrConnectWithoutApplicantInput[]
     createMany?: NotificationCreateManyApplicantInputEnvelope
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-  }
-
-  export type WorkExperienceUncheckedCreateNestedManyWithoutApplicantInput = {
-    create?: XOR<WorkExperienceCreateWithoutApplicantInput, WorkExperienceUncheckedCreateWithoutApplicantInput> | WorkExperienceCreateWithoutApplicantInput[] | WorkExperienceUncheckedCreateWithoutApplicantInput[]
-    connectOrCreate?: WorkExperienceCreateOrConnectWithoutApplicantInput | WorkExperienceCreateOrConnectWithoutApplicantInput[]
-    createMany?: WorkExperienceCreateManyApplicantInputEnvelope
-    connect?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
   }
 
   export type EducationHistoryUncheckedCreateNestedManyWithoutApplicantInput = {
@@ -23450,20 +21860,6 @@ export namespace Prisma {
     deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
   }
 
-  export type WorkExperienceUpdateManyWithoutApplicantNestedInput = {
-    create?: XOR<WorkExperienceCreateWithoutApplicantInput, WorkExperienceUncheckedCreateWithoutApplicantInput> | WorkExperienceCreateWithoutApplicantInput[] | WorkExperienceUncheckedCreateWithoutApplicantInput[]
-    connectOrCreate?: WorkExperienceCreateOrConnectWithoutApplicantInput | WorkExperienceCreateOrConnectWithoutApplicantInput[]
-    upsert?: WorkExperienceUpsertWithWhereUniqueWithoutApplicantInput | WorkExperienceUpsertWithWhereUniqueWithoutApplicantInput[]
-    createMany?: WorkExperienceCreateManyApplicantInputEnvelope
-    set?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    disconnect?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    delete?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    connect?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    update?: WorkExperienceUpdateWithWhereUniqueWithoutApplicantInput | WorkExperienceUpdateWithWhereUniqueWithoutApplicantInput[]
-    updateMany?: WorkExperienceUpdateManyWithWhereWithoutApplicantInput | WorkExperienceUpdateManyWithWhereWithoutApplicantInput[]
-    deleteMany?: WorkExperienceScalarWhereInput | WorkExperienceScalarWhereInput[]
-  }
-
   export type EducationHistoryUpdateManyWithoutApplicantNestedInput = {
     create?: XOR<EducationHistoryCreateWithoutApplicantInput, EducationHistoryUncheckedCreateWithoutApplicantInput> | EducationHistoryCreateWithoutApplicantInput[] | EducationHistoryUncheckedCreateWithoutApplicantInput[]
     connectOrCreate?: EducationHistoryCreateOrConnectWithoutApplicantInput | EducationHistoryCreateOrConnectWithoutApplicantInput[]
@@ -23546,20 +21942,6 @@ export namespace Prisma {
     update?: NotificationUpdateWithWhereUniqueWithoutApplicantInput | NotificationUpdateWithWhereUniqueWithoutApplicantInput[]
     updateMany?: NotificationUpdateManyWithWhereWithoutApplicantInput | NotificationUpdateManyWithWhereWithoutApplicantInput[]
     deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
-  }
-
-  export type WorkExperienceUncheckedUpdateManyWithoutApplicantNestedInput = {
-    create?: XOR<WorkExperienceCreateWithoutApplicantInput, WorkExperienceUncheckedCreateWithoutApplicantInput> | WorkExperienceCreateWithoutApplicantInput[] | WorkExperienceUncheckedCreateWithoutApplicantInput[]
-    connectOrCreate?: WorkExperienceCreateOrConnectWithoutApplicantInput | WorkExperienceCreateOrConnectWithoutApplicantInput[]
-    upsert?: WorkExperienceUpsertWithWhereUniqueWithoutApplicantInput | WorkExperienceUpsertWithWhereUniqueWithoutApplicantInput[]
-    createMany?: WorkExperienceCreateManyApplicantInputEnvelope
-    set?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    disconnect?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    delete?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    connect?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    update?: WorkExperienceUpdateWithWhereUniqueWithoutApplicantInput | WorkExperienceUpdateWithWhereUniqueWithoutApplicantInput[]
-    updateMany?: WorkExperienceUpdateManyWithWhereWithoutApplicantInput | WorkExperienceUpdateManyWithWhereWithoutApplicantInput[]
-    deleteMany?: WorkExperienceScalarWhereInput | WorkExperienceScalarWhereInput[]
   }
 
   export type EducationHistoryUncheckedUpdateManyWithoutApplicantNestedInput = {
@@ -23969,13 +22351,6 @@ export namespace Prisma {
     connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
   }
 
-  export type WorkExperienceCreateNestedManyWithoutApplicationInput = {
-    create?: XOR<WorkExperienceCreateWithoutApplicationInput, WorkExperienceUncheckedCreateWithoutApplicationInput> | WorkExperienceCreateWithoutApplicationInput[] | WorkExperienceUncheckedCreateWithoutApplicationInput[]
-    connectOrCreate?: WorkExperienceCreateOrConnectWithoutApplicationInput | WorkExperienceCreateOrConnectWithoutApplicationInput[]
-    createMany?: WorkExperienceCreateManyApplicationInputEnvelope
-    connect?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-  }
-
   export type AdmissionCreateNestedOneWithoutApplicationInput = {
     create?: XOR<AdmissionCreateWithoutApplicationInput, AdmissionUncheckedCreateWithoutApplicationInput>
     connectOrCreate?: AdmissionCreateOrConnectWithoutApplicationInput
@@ -23993,13 +22368,6 @@ export namespace Prisma {
     connectOrCreate?: DocumentCreateOrConnectWithoutApplicationInput | DocumentCreateOrConnectWithoutApplicationInput[]
     createMany?: DocumentCreateManyApplicationInputEnvelope
     connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
-  }
-
-  export type WorkExperienceUncheckedCreateNestedManyWithoutApplicationInput = {
-    create?: XOR<WorkExperienceCreateWithoutApplicationInput, WorkExperienceUncheckedCreateWithoutApplicationInput> | WorkExperienceCreateWithoutApplicationInput[] | WorkExperienceUncheckedCreateWithoutApplicationInput[]
-    connectOrCreate?: WorkExperienceCreateOrConnectWithoutApplicationInput | WorkExperienceCreateOrConnectWithoutApplicationInput[]
-    createMany?: WorkExperienceCreateManyApplicationInputEnvelope
-    connect?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
   }
 
   export type AdmissionUncheckedCreateNestedOneWithoutApplicationInput = {
@@ -24067,20 +22435,6 @@ export namespace Prisma {
     deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
   }
 
-  export type WorkExperienceUpdateManyWithoutApplicationNestedInput = {
-    create?: XOR<WorkExperienceCreateWithoutApplicationInput, WorkExperienceUncheckedCreateWithoutApplicationInput> | WorkExperienceCreateWithoutApplicationInput[] | WorkExperienceUncheckedCreateWithoutApplicationInput[]
-    connectOrCreate?: WorkExperienceCreateOrConnectWithoutApplicationInput | WorkExperienceCreateOrConnectWithoutApplicationInput[]
-    upsert?: WorkExperienceUpsertWithWhereUniqueWithoutApplicationInput | WorkExperienceUpsertWithWhereUniqueWithoutApplicationInput[]
-    createMany?: WorkExperienceCreateManyApplicationInputEnvelope
-    set?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    disconnect?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    delete?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    connect?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    update?: WorkExperienceUpdateWithWhereUniqueWithoutApplicationInput | WorkExperienceUpdateWithWhereUniqueWithoutApplicationInput[]
-    updateMany?: WorkExperienceUpdateManyWithWhereWithoutApplicationInput | WorkExperienceUpdateManyWithWhereWithoutApplicationInput[]
-    deleteMany?: WorkExperienceScalarWhereInput | WorkExperienceScalarWhereInput[]
-  }
-
   export type AdmissionUpdateOneWithoutApplicationNestedInput = {
     create?: XOR<AdmissionCreateWithoutApplicationInput, AdmissionUncheckedCreateWithoutApplicationInput>
     connectOrCreate?: AdmissionCreateOrConnectWithoutApplicationInput
@@ -24115,20 +22469,6 @@ export namespace Prisma {
     deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
   }
 
-  export type WorkExperienceUncheckedUpdateManyWithoutApplicationNestedInput = {
-    create?: XOR<WorkExperienceCreateWithoutApplicationInput, WorkExperienceUncheckedCreateWithoutApplicationInput> | WorkExperienceCreateWithoutApplicationInput[] | WorkExperienceUncheckedCreateWithoutApplicationInput[]
-    connectOrCreate?: WorkExperienceCreateOrConnectWithoutApplicationInput | WorkExperienceCreateOrConnectWithoutApplicationInput[]
-    upsert?: WorkExperienceUpsertWithWhereUniqueWithoutApplicationInput | WorkExperienceUpsertWithWhereUniqueWithoutApplicationInput[]
-    createMany?: WorkExperienceCreateManyApplicationInputEnvelope
-    set?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    disconnect?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    delete?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    connect?: WorkExperienceWhereUniqueInput | WorkExperienceWhereUniqueInput[]
-    update?: WorkExperienceUpdateWithWhereUniqueWithoutApplicationInput | WorkExperienceUpdateWithWhereUniqueWithoutApplicationInput[]
-    updateMany?: WorkExperienceUpdateManyWithWhereWithoutApplicationInput | WorkExperienceUpdateManyWithWhereWithoutApplicationInput[]
-    deleteMany?: WorkExperienceScalarWhereInput | WorkExperienceScalarWhereInput[]
-  }
-
   export type AdmissionUncheckedUpdateOneWithoutApplicationNestedInput = {
     create?: XOR<AdmissionCreateWithoutApplicationInput, AdmissionUncheckedCreateWithoutApplicationInput>
     connectOrCreate?: AdmissionCreateOrConnectWithoutApplicationInput
@@ -24137,34 +22477,6 @@ export namespace Prisma {
     delete?: AdmissionWhereInput | boolean
     connect?: AdmissionWhereUniqueInput
     update?: XOR<XOR<AdmissionUpdateToOneWithWhereWithoutApplicationInput, AdmissionUpdateWithoutApplicationInput>, AdmissionUncheckedUpdateWithoutApplicationInput>
-  }
-
-  export type ApplicationCreateNestedOneWithoutWorkExperiencesInput = {
-    create?: XOR<ApplicationCreateWithoutWorkExperiencesInput, ApplicationUncheckedCreateWithoutWorkExperiencesInput>
-    connectOrCreate?: ApplicationCreateOrConnectWithoutWorkExperiencesInput
-    connect?: ApplicationWhereUniqueInput
-  }
-
-  export type ApplicantCreateNestedOneWithoutWorkExperiencesInput = {
-    create?: XOR<ApplicantCreateWithoutWorkExperiencesInput, ApplicantUncheckedCreateWithoutWorkExperiencesInput>
-    connectOrCreate?: ApplicantCreateOrConnectWithoutWorkExperiencesInput
-    connect?: ApplicantWhereUniqueInput
-  }
-
-  export type ApplicationUpdateOneRequiredWithoutWorkExperiencesNestedInput = {
-    create?: XOR<ApplicationCreateWithoutWorkExperiencesInput, ApplicationUncheckedCreateWithoutWorkExperiencesInput>
-    connectOrCreate?: ApplicationCreateOrConnectWithoutWorkExperiencesInput
-    upsert?: ApplicationUpsertWithoutWorkExperiencesInput
-    connect?: ApplicationWhereUniqueInput
-    update?: XOR<XOR<ApplicationUpdateToOneWithWhereWithoutWorkExperiencesInput, ApplicationUpdateWithoutWorkExperiencesInput>, ApplicationUncheckedUpdateWithoutWorkExperiencesInput>
-  }
-
-  export type ApplicantUpdateOneRequiredWithoutWorkExperiencesNestedInput = {
-    create?: XOR<ApplicantCreateWithoutWorkExperiencesInput, ApplicantUncheckedCreateWithoutWorkExperiencesInput>
-    connectOrCreate?: ApplicantCreateOrConnectWithoutWorkExperiencesInput
-    upsert?: ApplicantUpsertWithoutWorkExperiencesInput
-    connect?: ApplicantWhereUniqueInput
-    update?: XOR<XOR<ApplicantUpdateToOneWithWhereWithoutWorkExperiencesInput, ApplicantUpdateWithoutWorkExperiencesInput>, ApplicantUncheckedUpdateWithoutWorkExperiencesInput>
   }
 
   export type ApplicantCreateNestedOneWithoutEducationHistoryInput = {
@@ -24771,7 +23083,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -24783,7 +23094,6 @@ export namespace Prisma {
     intake?: IntakeCreateNestedOneWithoutApplicationsInput
     payment?: PaymentCreateNestedOneWithoutApplicationInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicationInput
     admission?: AdmissionCreateNestedOneWithoutApplicationInput
   }
 
@@ -24803,7 +23113,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -24813,7 +23122,6 @@ export namespace Prisma {
     shortCourseDuration?: string | null
     payment?: PaymentUncheckedCreateNestedOneWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicationInput
     admission?: AdmissionUncheckedCreateNestedOneWithoutApplicationInput
   }
 
@@ -24925,40 +23233,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type WorkExperienceCreateWithoutApplicantInput = {
-    id?: string
-    company: string
-    position: string
-    startDate: Date | string
-    endDate?: Date | string | null
-    description: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    application: ApplicationCreateNestedOneWithoutWorkExperiencesInput
-  }
-
-  export type WorkExperienceUncheckedCreateWithoutApplicantInput = {
-    id?: string
-    applicationId: string
-    company: string
-    position: string
-    startDate: Date | string
-    endDate?: Date | string | null
-    description: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type WorkExperienceCreateOrConnectWithoutApplicantInput = {
-    where: WorkExperienceWhereUniqueInput
-    create: XOR<WorkExperienceCreateWithoutApplicantInput, WorkExperienceUncheckedCreateWithoutApplicantInput>
-  }
-
-  export type WorkExperienceCreateManyApplicantInputEnvelope = {
-    data: WorkExperienceCreateManyApplicantInput | WorkExperienceCreateManyApplicantInput[]
-    skipDuplicates?: boolean
-  }
-
   export type EducationHistoryCreateWithoutApplicantInput = {
     id?: string
     institutionName: string
@@ -25051,7 +23325,6 @@ export namespace Prisma {
     basicsComplete?: BoolFilter<"Application"> | boolean
     personalInfoComplete?: BoolFilter<"Application"> | boolean
     educationComplete?: BoolFilter<"Application"> | boolean
-    workExperienceComplete?: BoolFilter<"Application"> | boolean
     programInfoComplete?: BoolFilter<"Application"> | boolean
     documentsComplete?: BoolFilter<"Application"> | boolean
     declarationComplete?: BoolFilter<"Application"> | boolean
@@ -25154,38 +23427,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Notification"> | Date | string
   }
 
-  export type WorkExperienceUpsertWithWhereUniqueWithoutApplicantInput = {
-    where: WorkExperienceWhereUniqueInput
-    update: XOR<WorkExperienceUpdateWithoutApplicantInput, WorkExperienceUncheckedUpdateWithoutApplicantInput>
-    create: XOR<WorkExperienceCreateWithoutApplicantInput, WorkExperienceUncheckedCreateWithoutApplicantInput>
-  }
-
-  export type WorkExperienceUpdateWithWhereUniqueWithoutApplicantInput = {
-    where: WorkExperienceWhereUniqueInput
-    data: XOR<WorkExperienceUpdateWithoutApplicantInput, WorkExperienceUncheckedUpdateWithoutApplicantInput>
-  }
-
-  export type WorkExperienceUpdateManyWithWhereWithoutApplicantInput = {
-    where: WorkExperienceScalarWhereInput
-    data: XOR<WorkExperienceUpdateManyMutationInput, WorkExperienceUncheckedUpdateManyWithoutApplicantInput>
-  }
-
-  export type WorkExperienceScalarWhereInput = {
-    AND?: WorkExperienceScalarWhereInput | WorkExperienceScalarWhereInput[]
-    OR?: WorkExperienceScalarWhereInput[]
-    NOT?: WorkExperienceScalarWhereInput | WorkExperienceScalarWhereInput[]
-    id?: StringFilter<"WorkExperience"> | string
-    applicationId?: StringFilter<"WorkExperience"> | string
-    applicantId?: StringFilter<"WorkExperience"> | string
-    company?: StringFilter<"WorkExperience"> | string
-    position?: StringFilter<"WorkExperience"> | string
-    startDate?: DateTimeFilter<"WorkExperience"> | Date | string
-    endDate?: DateTimeNullableFilter<"WorkExperience"> | Date | string | null
-    description?: StringFilter<"WorkExperience"> | string
-    createdAt?: DateTimeFilter<"WorkExperience"> | Date | string
-    updatedAt?: DateTimeFilter<"WorkExperience"> | Date | string
-  }
-
   export type EducationHistoryUpsertWithWhereUniqueWithoutApplicantInput = {
     where: EducationHistoryWhereUniqueInput
     update: XOR<EducationHistoryUpdateWithoutApplicantInput, EducationHistoryUncheckedUpdateWithoutApplicantInput>
@@ -25250,7 +23491,6 @@ export namespace Prisma {
     admissions?: AdmissionCreateNestedManyWithoutApplicantInput
     documents?: DocumentCreateNestedManyWithoutApplicantInput
     notifications?: NotificationCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicantInput
     educationHistory?: EducationHistoryCreateNestedManyWithoutApplicantInput
   }
 
@@ -25288,7 +23528,6 @@ export namespace Prisma {
     admissions?: AdmissionUncheckedCreateNestedManyWithoutApplicantInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicantInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicantInput
     educationHistory?: EducationHistoryUncheckedCreateNestedManyWithoutApplicantInput
   }
 
@@ -25342,7 +23581,6 @@ export namespace Prisma {
     admissions?: AdmissionUpdateManyWithoutApplicantNestedInput
     documents?: DocumentUpdateManyWithoutApplicantNestedInput
     notifications?: NotificationUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicantNestedInput
     educationHistory?: EducationHistoryUpdateManyWithoutApplicantNestedInput
   }
 
@@ -25380,7 +23618,6 @@ export namespace Prisma {
     admissions?: AdmissionUncheckedUpdateManyWithoutApplicantNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicantNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicantNestedInput
     educationHistory?: EducationHistoryUncheckedUpdateManyWithoutApplicantNestedInput
   }
 
@@ -25435,7 +23672,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -25447,7 +23683,6 @@ export namespace Prisma {
     program: ProgramCreateNestedOneWithoutApplicationsInput
     payment?: PaymentCreateNestedOneWithoutApplicationInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicationInput
     admission?: AdmissionCreateNestedOneWithoutApplicationInput
   }
 
@@ -25467,7 +23702,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -25477,7 +23711,6 @@ export namespace Prisma {
     shortCourseDuration?: string | null
     payment?: PaymentUncheckedCreateNestedOneWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicationInput
     admission?: AdmissionUncheckedCreateNestedOneWithoutApplicationInput
   }
 
@@ -25667,7 +23900,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -25679,7 +23911,6 @@ export namespace Prisma {
     intake?: IntakeCreateNestedOneWithoutApplicationsInput
     payment?: PaymentCreateNestedOneWithoutApplicationInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicationInput
     admission?: AdmissionCreateNestedOneWithoutApplicationInput
   }
 
@@ -25699,7 +23930,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -25709,7 +23939,6 @@ export namespace Prisma {
     shortCourseDuration?: string | null
     payment?: PaymentUncheckedCreateNestedOneWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicationInput
     admission?: AdmissionUncheckedCreateNestedOneWithoutApplicationInput
   }
 
@@ -25936,7 +24165,6 @@ export namespace Prisma {
     admissions?: AdmissionCreateNestedManyWithoutApplicantInput
     documents?: DocumentCreateNestedManyWithoutApplicantInput
     notifications?: NotificationCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicantInput
     educationHistory?: EducationHistoryCreateNestedManyWithoutApplicantInput
   }
 
@@ -25974,7 +24202,6 @@ export namespace Prisma {
     admissions?: AdmissionUncheckedCreateNestedManyWithoutApplicantInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicantInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicantInput
     educationHistory?: EducationHistoryUncheckedCreateNestedManyWithoutApplicantInput
   }
 
@@ -26114,40 +24341,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type WorkExperienceCreateWithoutApplicationInput = {
-    id?: string
-    company: string
-    position: string
-    startDate: Date | string
-    endDate?: Date | string | null
-    description: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    applicant: ApplicantCreateNestedOneWithoutWorkExperiencesInput
-  }
-
-  export type WorkExperienceUncheckedCreateWithoutApplicationInput = {
-    id?: string
-    applicantId: string
-    company: string
-    position: string
-    startDate: Date | string
-    endDate?: Date | string | null
-    description: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type WorkExperienceCreateOrConnectWithoutApplicationInput = {
-    where: WorkExperienceWhereUniqueInput
-    create: XOR<WorkExperienceCreateWithoutApplicationInput, WorkExperienceUncheckedCreateWithoutApplicationInput>
-  }
-
-  export type WorkExperienceCreateManyApplicationInputEnvelope = {
-    data: WorkExperienceCreateManyApplicationInput | WorkExperienceCreateManyApplicationInput[]
-    skipDuplicates?: boolean
-  }
-
   export type AdmissionCreateWithoutApplicationInput = {
     id?: string
     admissionNumber: string
@@ -26224,7 +24417,6 @@ export namespace Prisma {
     admissions?: AdmissionUpdateManyWithoutApplicantNestedInput
     documents?: DocumentUpdateManyWithoutApplicantNestedInput
     notifications?: NotificationUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicantNestedInput
     educationHistory?: EducationHistoryUpdateManyWithoutApplicantNestedInput
   }
 
@@ -26262,7 +24454,6 @@ export namespace Prisma {
     admissions?: AdmissionUncheckedUpdateManyWithoutApplicantNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicantNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicantNestedInput
     educationHistory?: EducationHistoryUncheckedUpdateManyWithoutApplicantNestedInput
   }
 
@@ -26399,22 +24590,6 @@ export namespace Prisma {
     data: XOR<DocumentUpdateManyMutationInput, DocumentUncheckedUpdateManyWithoutApplicationInput>
   }
 
-  export type WorkExperienceUpsertWithWhereUniqueWithoutApplicationInput = {
-    where: WorkExperienceWhereUniqueInput
-    update: XOR<WorkExperienceUpdateWithoutApplicationInput, WorkExperienceUncheckedUpdateWithoutApplicationInput>
-    create: XOR<WorkExperienceCreateWithoutApplicationInput, WorkExperienceUncheckedCreateWithoutApplicationInput>
-  }
-
-  export type WorkExperienceUpdateWithWhereUniqueWithoutApplicationInput = {
-    where: WorkExperienceWhereUniqueInput
-    data: XOR<WorkExperienceUpdateWithoutApplicationInput, WorkExperienceUncheckedUpdateWithoutApplicationInput>
-  }
-
-  export type WorkExperienceUpdateManyWithWhereWithoutApplicationInput = {
-    where: WorkExperienceScalarWhereInput
-    data: XOR<WorkExperienceUpdateManyMutationInput, WorkExperienceUncheckedUpdateManyWithoutApplicationInput>
-  }
-
   export type AdmissionUpsertWithoutApplicationInput = {
     update: XOR<AdmissionUpdateWithoutApplicationInput, AdmissionUncheckedUpdateWithoutApplicationInput>
     create: XOR<AdmissionCreateWithoutApplicationInput, AdmissionUncheckedCreateWithoutApplicationInput>
@@ -26452,310 +24627,6 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutAdmissionNestedInput
   }
 
-  export type ApplicationCreateWithoutWorkExperiencesInput = {
-    id?: string
-    status?: $Enums.ApplicationStatus
-    notes?: string | null
-    reviewedBy?: string | null
-    reviewedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    completedSteps?: ApplicationCreatecompletedStepsInput | string[]
-    currentStep?: string | null
-    progress?: number
-    basicsComplete?: boolean
-    personalInfoComplete?: boolean
-    educationComplete?: boolean
-    workExperienceComplete?: boolean
-    programInfoComplete?: boolean
-    documentsComplete?: boolean
-    declarationComplete?: boolean
-    declarationSigned?: boolean
-    declarationDate?: Date | string | null
-    isShortCourse?: boolean
-    shortCourseDuration?: string | null
-    applicant: ApplicantCreateNestedOneWithoutApplicationsInput
-    program: ProgramCreateNestedOneWithoutApplicationsInput
-    intake?: IntakeCreateNestedOneWithoutApplicationsInput
-    payment?: PaymentCreateNestedOneWithoutApplicationInput
-    documents?: DocumentCreateNestedManyWithoutApplicationInput
-    admission?: AdmissionCreateNestedOneWithoutApplicationInput
-  }
-
-  export type ApplicationUncheckedCreateWithoutWorkExperiencesInput = {
-    id?: string
-    applicantId: string
-    programId: string
-    intakeId?: string | null
-    status?: $Enums.ApplicationStatus
-    notes?: string | null
-    reviewedBy?: string | null
-    reviewedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    completedSteps?: ApplicationCreatecompletedStepsInput | string[]
-    currentStep?: string | null
-    progress?: number
-    basicsComplete?: boolean
-    personalInfoComplete?: boolean
-    educationComplete?: boolean
-    workExperienceComplete?: boolean
-    programInfoComplete?: boolean
-    documentsComplete?: boolean
-    declarationComplete?: boolean
-    declarationSigned?: boolean
-    declarationDate?: Date | string | null
-    isShortCourse?: boolean
-    shortCourseDuration?: string | null
-    payment?: PaymentUncheckedCreateNestedOneWithoutApplicationInput
-    documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
-    admission?: AdmissionUncheckedCreateNestedOneWithoutApplicationInput
-  }
-
-  export type ApplicationCreateOrConnectWithoutWorkExperiencesInput = {
-    where: ApplicationWhereUniqueInput
-    create: XOR<ApplicationCreateWithoutWorkExperiencesInput, ApplicationUncheckedCreateWithoutWorkExperiencesInput>
-  }
-
-  export type ApplicantCreateWithoutWorkExperiencesInput = {
-    id?: string
-    name?: string
-    email?: string | null
-    phone?: string | null
-    password: string
-    emailVerified?: Date | string | null
-    phoneVerified?: Date | string | null
-    lastLoginAt?: Date | string | null
-    loginAttempts?: number
-    role?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    firstName?: string | null
-    middleName?: string | null
-    surname?: string | null
-    dateOfBirth?: Date | string | null
-    gender?: string | null
-    nationality?: string | null
-    physicalAddress?: string | null
-    nextOfKinName?: string | null
-    nextOfKinRelationship?: string | null
-    nextOfKinOccupation?: string | null
-    nextOfKinAddress?: string | null
-    nextOfKinPhone?: string | null
-    sponsorName?: string | null
-    sponsorRelationship?: string | null
-    sponsorOccupation?: string | null
-    sponsorAddress?: string | null
-    sponsorPhone?: string | null
-    passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutApplicantInput
-    applications?: ApplicationCreateNestedManyWithoutApplicantInput
-    admissions?: AdmissionCreateNestedManyWithoutApplicantInput
-    documents?: DocumentCreateNestedManyWithoutApplicantInput
-    notifications?: NotificationCreateNestedManyWithoutApplicantInput
-    educationHistory?: EducationHistoryCreateNestedManyWithoutApplicantInput
-  }
-
-  export type ApplicantUncheckedCreateWithoutWorkExperiencesInput = {
-    id?: string
-    name?: string
-    email?: string | null
-    phone?: string | null
-    password: string
-    emailVerified?: Date | string | null
-    phoneVerified?: Date | string | null
-    lastLoginAt?: Date | string | null
-    loginAttempts?: number
-    role?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    firstName?: string | null
-    middleName?: string | null
-    surname?: string | null
-    dateOfBirth?: Date | string | null
-    gender?: string | null
-    nationality?: string | null
-    physicalAddress?: string | null
-    nextOfKinName?: string | null
-    nextOfKinRelationship?: string | null
-    nextOfKinOccupation?: string | null
-    nextOfKinAddress?: string | null
-    nextOfKinPhone?: string | null
-    sponsorName?: string | null
-    sponsorRelationship?: string | null
-    sponsorOccupation?: string | null
-    sponsorAddress?: string | null
-    sponsorPhone?: string | null
-    passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutApplicantInput
-    applications?: ApplicationUncheckedCreateNestedManyWithoutApplicantInput
-    admissions?: AdmissionUncheckedCreateNestedManyWithoutApplicantInput
-    documents?: DocumentUncheckedCreateNestedManyWithoutApplicantInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutApplicantInput
-    educationHistory?: EducationHistoryUncheckedCreateNestedManyWithoutApplicantInput
-  }
-
-  export type ApplicantCreateOrConnectWithoutWorkExperiencesInput = {
-    where: ApplicantWhereUniqueInput
-    create: XOR<ApplicantCreateWithoutWorkExperiencesInput, ApplicantUncheckedCreateWithoutWorkExperiencesInput>
-  }
-
-  export type ApplicationUpsertWithoutWorkExperiencesInput = {
-    update: XOR<ApplicationUpdateWithoutWorkExperiencesInput, ApplicationUncheckedUpdateWithoutWorkExperiencesInput>
-    create: XOR<ApplicationCreateWithoutWorkExperiencesInput, ApplicationUncheckedCreateWithoutWorkExperiencesInput>
-    where?: ApplicationWhereInput
-  }
-
-  export type ApplicationUpdateToOneWithWhereWithoutWorkExperiencesInput = {
-    where?: ApplicationWhereInput
-    data: XOR<ApplicationUpdateWithoutWorkExperiencesInput, ApplicationUncheckedUpdateWithoutWorkExperiencesInput>
-  }
-
-  export type ApplicationUpdateWithoutWorkExperiencesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    completedSteps?: ApplicationUpdatecompletedStepsInput | string[]
-    currentStep?: NullableStringFieldUpdateOperationsInput | string | null
-    progress?: IntFieldUpdateOperationsInput | number
-    basicsComplete?: BoolFieldUpdateOperationsInput | boolean
-    personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
-    educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
-    programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
-    documentsComplete?: BoolFieldUpdateOperationsInput | boolean
-    declarationComplete?: BoolFieldUpdateOperationsInput | boolean
-    declarationSigned?: BoolFieldUpdateOperationsInput | boolean
-    declarationDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    isShortCourse?: BoolFieldUpdateOperationsInput | boolean
-    shortCourseDuration?: NullableStringFieldUpdateOperationsInput | string | null
-    applicant?: ApplicantUpdateOneRequiredWithoutApplicationsNestedInput
-    program?: ProgramUpdateOneRequiredWithoutApplicationsNestedInput
-    intake?: IntakeUpdateOneWithoutApplicationsNestedInput
-    payment?: PaymentUpdateOneWithoutApplicationNestedInput
-    documents?: DocumentUpdateManyWithoutApplicationNestedInput
-    admission?: AdmissionUpdateOneWithoutApplicationNestedInput
-  }
-
-  export type ApplicationUncheckedUpdateWithoutWorkExperiencesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    applicantId?: StringFieldUpdateOperationsInput | string
-    programId?: StringFieldUpdateOperationsInput | string
-    intakeId?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    reviewedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    completedSteps?: ApplicationUpdatecompletedStepsInput | string[]
-    currentStep?: NullableStringFieldUpdateOperationsInput | string | null
-    progress?: IntFieldUpdateOperationsInput | number
-    basicsComplete?: BoolFieldUpdateOperationsInput | boolean
-    personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
-    educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
-    programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
-    documentsComplete?: BoolFieldUpdateOperationsInput | boolean
-    declarationComplete?: BoolFieldUpdateOperationsInput | boolean
-    declarationSigned?: BoolFieldUpdateOperationsInput | boolean
-    declarationDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    isShortCourse?: BoolFieldUpdateOperationsInput | boolean
-    shortCourseDuration?: NullableStringFieldUpdateOperationsInput | string | null
-    payment?: PaymentUncheckedUpdateOneWithoutApplicationNestedInput
-    documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
-    admission?: AdmissionUncheckedUpdateOneWithoutApplicationNestedInput
-  }
-
-  export type ApplicantUpsertWithoutWorkExperiencesInput = {
-    update: XOR<ApplicantUpdateWithoutWorkExperiencesInput, ApplicantUncheckedUpdateWithoutWorkExperiencesInput>
-    create: XOR<ApplicantCreateWithoutWorkExperiencesInput, ApplicantUncheckedCreateWithoutWorkExperiencesInput>
-    where?: ApplicantWhereInput
-  }
-
-  export type ApplicantUpdateToOneWithWhereWithoutWorkExperiencesInput = {
-    where?: ApplicantWhereInput
-    data: XOR<ApplicantUpdateWithoutWorkExperiencesInput, ApplicantUncheckedUpdateWithoutWorkExperiencesInput>
-  }
-
-  export type ApplicantUpdateWithoutWorkExperiencesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    phoneVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    loginAttempts?: IntFieldUpdateOperationsInput | number
-    role?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    firstName?: NullableStringFieldUpdateOperationsInput | string | null
-    middleName?: NullableStringFieldUpdateOperationsInput | string | null
-    surname?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    nationality?: NullableStringFieldUpdateOperationsInput | string | null
-    physicalAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    nextOfKinName?: NullableStringFieldUpdateOperationsInput | string | null
-    nextOfKinRelationship?: NullableStringFieldUpdateOperationsInput | string | null
-    nextOfKinOccupation?: NullableStringFieldUpdateOperationsInput | string | null
-    nextOfKinAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    nextOfKinPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    sponsorName?: NullableStringFieldUpdateOperationsInput | string | null
-    sponsorRelationship?: NullableStringFieldUpdateOperationsInput | string | null
-    sponsorOccupation?: NullableStringFieldUpdateOperationsInput | string | null
-    sponsorAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    sponsorPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    passwordResetTokens?: PasswordResetTokenUpdateManyWithoutApplicantNestedInput
-    applications?: ApplicationUpdateManyWithoutApplicantNestedInput
-    admissions?: AdmissionUpdateManyWithoutApplicantNestedInput
-    documents?: DocumentUpdateManyWithoutApplicantNestedInput
-    notifications?: NotificationUpdateManyWithoutApplicantNestedInput
-    educationHistory?: EducationHistoryUpdateManyWithoutApplicantNestedInput
-  }
-
-  export type ApplicantUncheckedUpdateWithoutWorkExperiencesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    phoneVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    lastLoginAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    loginAttempts?: IntFieldUpdateOperationsInput | number
-    role?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    firstName?: NullableStringFieldUpdateOperationsInput | string | null
-    middleName?: NullableStringFieldUpdateOperationsInput | string | null
-    surname?: NullableStringFieldUpdateOperationsInput | string | null
-    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    nationality?: NullableStringFieldUpdateOperationsInput | string | null
-    physicalAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    nextOfKinName?: NullableStringFieldUpdateOperationsInput | string | null
-    nextOfKinRelationship?: NullableStringFieldUpdateOperationsInput | string | null
-    nextOfKinOccupation?: NullableStringFieldUpdateOperationsInput | string | null
-    nextOfKinAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    nextOfKinPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    sponsorName?: NullableStringFieldUpdateOperationsInput | string | null
-    sponsorRelationship?: NullableStringFieldUpdateOperationsInput | string | null
-    sponsorOccupation?: NullableStringFieldUpdateOperationsInput | string | null
-    sponsorAddress?: NullableStringFieldUpdateOperationsInput | string | null
-    sponsorPhone?: NullableStringFieldUpdateOperationsInput | string | null
-    passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutApplicantNestedInput
-    applications?: ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
-    admissions?: AdmissionUncheckedUpdateManyWithoutApplicantNestedInput
-    documents?: DocumentUncheckedUpdateManyWithoutApplicantNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutApplicantNestedInput
-    educationHistory?: EducationHistoryUncheckedUpdateManyWithoutApplicantNestedInput
-  }
-
   export type ApplicantCreateWithoutEducationHistoryInput = {
     id?: string
     name?: string
@@ -26791,7 +24662,6 @@ export namespace Prisma {
     admissions?: AdmissionCreateNestedManyWithoutApplicantInput
     documents?: DocumentCreateNestedManyWithoutApplicantInput
     notifications?: NotificationCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicantInput
   }
 
   export type ApplicantUncheckedCreateWithoutEducationHistoryInput = {
@@ -26829,7 +24699,6 @@ export namespace Prisma {
     admissions?: AdmissionUncheckedCreateNestedManyWithoutApplicantInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicantInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicantInput
   }
 
   export type ApplicantCreateOrConnectWithoutEducationHistoryInput = {
@@ -26883,7 +24752,6 @@ export namespace Prisma {
     admissions?: AdmissionUpdateManyWithoutApplicantNestedInput
     documents?: DocumentUpdateManyWithoutApplicantNestedInput
     notifications?: NotificationUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicantNestedInput
   }
 
   export type ApplicantUncheckedUpdateWithoutEducationHistoryInput = {
@@ -26921,7 +24789,6 @@ export namespace Prisma {
     admissions?: AdmissionUncheckedUpdateManyWithoutApplicantNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicantNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicantNestedInput
   }
 
   export type ApplicationCreateWithoutPaymentInput = {
@@ -26938,7 +24805,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -26950,7 +24816,6 @@ export namespace Prisma {
     program: ProgramCreateNestedOneWithoutApplicationsInput
     intake?: IntakeCreateNestedOneWithoutApplicationsInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicationInput
     admission?: AdmissionCreateNestedOneWithoutApplicationInput
   }
 
@@ -26971,7 +24836,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -26980,7 +24844,6 @@ export namespace Prisma {
     isShortCourse?: boolean
     shortCourseDuration?: string | null
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicationInput
     admission?: AdmissionUncheckedCreateNestedOneWithoutApplicationInput
   }
 
@@ -27014,7 +24877,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -27026,7 +24888,6 @@ export namespace Prisma {
     program?: ProgramUpdateOneRequiredWithoutApplicationsNestedInput
     intake?: IntakeUpdateOneWithoutApplicationsNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicationNestedInput
     admission?: AdmissionUpdateOneWithoutApplicationNestedInput
   }
 
@@ -27047,7 +24908,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -27056,7 +24916,6 @@ export namespace Prisma {
     isShortCourse?: BoolFieldUpdateOperationsInput | boolean
     shortCourseDuration?: NullableStringFieldUpdateOperationsInput | string | null
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicationNestedInput
     admission?: AdmissionUncheckedUpdateOneWithoutApplicationNestedInput
   }
 
@@ -27094,7 +24953,6 @@ export namespace Prisma {
     applications?: ApplicationCreateNestedManyWithoutApplicantInput
     documents?: DocumentCreateNestedManyWithoutApplicantInput
     notifications?: NotificationCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicantInput
     educationHistory?: EducationHistoryCreateNestedManyWithoutApplicantInput
   }
 
@@ -27132,7 +24990,6 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutApplicantInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicantInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicantInput
     educationHistory?: EducationHistoryUncheckedCreateNestedManyWithoutApplicantInput
   }
 
@@ -27192,7 +25049,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -27205,7 +25061,6 @@ export namespace Prisma {
     intake?: IntakeCreateNestedOneWithoutApplicationsInput
     payment?: PaymentCreateNestedOneWithoutApplicationInput
     documents?: DocumentCreateNestedManyWithoutApplicationInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicationInput
   }
 
   export type ApplicationUncheckedCreateWithoutAdmissionInput = {
@@ -27225,7 +25080,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -27235,7 +25089,6 @@ export namespace Prisma {
     shortCourseDuration?: string | null
     payment?: PaymentUncheckedCreateNestedOneWithoutApplicationInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicationInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicationInput
   }
 
   export type ApplicationCreateOrConnectWithoutAdmissionInput = {
@@ -27320,7 +25173,6 @@ export namespace Prisma {
     applications?: ApplicationUpdateManyWithoutApplicantNestedInput
     documents?: DocumentUpdateManyWithoutApplicantNestedInput
     notifications?: NotificationUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicantNestedInput
     educationHistory?: EducationHistoryUpdateManyWithoutApplicantNestedInput
   }
 
@@ -27358,7 +25210,6 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicantNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicantNestedInput
     educationHistory?: EducationHistoryUncheckedUpdateManyWithoutApplicantNestedInput
   }
 
@@ -27430,7 +25281,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -27443,7 +25293,6 @@ export namespace Prisma {
     intake?: IntakeUpdateOneWithoutApplicationsNestedInput
     payment?: PaymentUpdateOneWithoutApplicationNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicationNestedInput
   }
 
   export type ApplicationUncheckedUpdateWithoutAdmissionInput = {
@@ -27463,7 +25312,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -27473,7 +25321,6 @@ export namespace Prisma {
     shortCourseDuration?: NullableStringFieldUpdateOperationsInput | string | null
     payment?: PaymentUncheckedUpdateOneWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicationNestedInput
   }
 
   export type DocumentUpsertWithWhereUniqueWithoutAdmissionInput = {
@@ -27526,7 +25373,6 @@ export namespace Prisma {
     applications?: ApplicationCreateNestedManyWithoutApplicantInput
     admissions?: AdmissionCreateNestedManyWithoutApplicantInput
     notifications?: NotificationCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicantInput
     educationHistory?: EducationHistoryCreateNestedManyWithoutApplicantInput
   }
 
@@ -27564,7 +25410,6 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutApplicantInput
     admissions?: AdmissionUncheckedCreateNestedManyWithoutApplicantInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicantInput
     educationHistory?: EducationHistoryUncheckedCreateNestedManyWithoutApplicantInput
   }
 
@@ -27587,7 +25432,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -27599,7 +25443,6 @@ export namespace Prisma {
     program: ProgramCreateNestedOneWithoutApplicationsInput
     intake?: IntakeCreateNestedOneWithoutApplicationsInput
     payment?: PaymentCreateNestedOneWithoutApplicationInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicationInput
     admission?: AdmissionCreateNestedOneWithoutApplicationInput
   }
 
@@ -27620,7 +25463,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -27629,7 +25471,6 @@ export namespace Prisma {
     isShortCourse?: boolean
     shortCourseDuration?: string | null
     payment?: PaymentUncheckedCreateNestedOneWithoutApplicationInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicationInput
     admission?: AdmissionUncheckedCreateNestedOneWithoutApplicationInput
   }
 
@@ -27714,7 +25555,6 @@ export namespace Prisma {
     applications?: ApplicationUpdateManyWithoutApplicantNestedInput
     admissions?: AdmissionUpdateManyWithoutApplicantNestedInput
     notifications?: NotificationUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicantNestedInput
     educationHistory?: EducationHistoryUpdateManyWithoutApplicantNestedInput
   }
 
@@ -27752,7 +25592,6 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
     admissions?: AdmissionUncheckedUpdateManyWithoutApplicantNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicantNestedInput
     educationHistory?: EducationHistoryUncheckedUpdateManyWithoutApplicantNestedInput
   }
 
@@ -27781,7 +25620,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -27793,7 +25631,6 @@ export namespace Prisma {
     program?: ProgramUpdateOneRequiredWithoutApplicationsNestedInput
     intake?: IntakeUpdateOneWithoutApplicationsNestedInput
     payment?: PaymentUpdateOneWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicationNestedInput
     admission?: AdmissionUpdateOneWithoutApplicationNestedInput
   }
 
@@ -27814,7 +25651,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -27823,7 +25659,6 @@ export namespace Prisma {
     isShortCourse?: BoolFieldUpdateOperationsInput | boolean
     shortCourseDuration?: NullableStringFieldUpdateOperationsInput | string | null
     payment?: PaymentUncheckedUpdateOneWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicationNestedInput
     admission?: AdmissionUncheckedUpdateOneWithoutApplicationNestedInput
   }
 
@@ -27970,7 +25805,6 @@ export namespace Prisma {
     applications?: ApplicationCreateNestedManyWithoutApplicantInput
     admissions?: AdmissionCreateNestedManyWithoutApplicantInput
     documents?: DocumentCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceCreateNestedManyWithoutApplicantInput
     educationHistory?: EducationHistoryCreateNestedManyWithoutApplicantInput
   }
 
@@ -28008,7 +25842,6 @@ export namespace Prisma {
     applications?: ApplicationUncheckedCreateNestedManyWithoutApplicantInput
     admissions?: AdmissionUncheckedCreateNestedManyWithoutApplicantInput
     documents?: DocumentUncheckedCreateNestedManyWithoutApplicantInput
-    workExperiences?: WorkExperienceUncheckedCreateNestedManyWithoutApplicantInput
     educationHistory?: EducationHistoryUncheckedCreateNestedManyWithoutApplicantInput
   }
 
@@ -28062,7 +25895,6 @@ export namespace Prisma {
     applications?: ApplicationUpdateManyWithoutApplicantNestedInput
     admissions?: AdmissionUpdateManyWithoutApplicantNestedInput
     documents?: DocumentUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicantNestedInput
     educationHistory?: EducationHistoryUpdateManyWithoutApplicantNestedInput
   }
 
@@ -28100,7 +25932,6 @@ export namespace Prisma {
     applications?: ApplicationUncheckedUpdateManyWithoutApplicantNestedInput
     admissions?: AdmissionUncheckedUpdateManyWithoutApplicantNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicantNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicantNestedInput
     educationHistory?: EducationHistoryUncheckedUpdateManyWithoutApplicantNestedInput
   }
 
@@ -28126,7 +25957,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -28165,18 +25995,6 @@ export namespace Prisma {
     message: string
     type: $Enums.NotificationType
     isRead?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type WorkExperienceCreateManyApplicantInput = {
-    id?: string
-    applicationId: string
-    company: string
-    position: string
-    startDate: Date | string
-    endDate?: Date | string | null
-    description: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -28223,7 +26041,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -28235,7 +26052,6 @@ export namespace Prisma {
     intake?: IntakeUpdateOneWithoutApplicationsNestedInput
     payment?: PaymentUpdateOneWithoutApplicationNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicationNestedInput
     admission?: AdmissionUpdateOneWithoutApplicationNestedInput
   }
 
@@ -28255,7 +26071,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -28265,7 +26080,6 @@ export namespace Prisma {
     shortCourseDuration?: NullableStringFieldUpdateOperationsInput | string | null
     payment?: PaymentUncheckedUpdateOneWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicationNestedInput
     admission?: AdmissionUncheckedUpdateOneWithoutApplicationNestedInput
   }
 
@@ -28285,7 +26099,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -28396,42 +26209,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type WorkExperienceUpdateWithoutApplicantInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    company?: StringFieldUpdateOperationsInput | string
-    position?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    description?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    application?: ApplicationUpdateOneRequiredWithoutWorkExperiencesNestedInput
-  }
-
-  export type WorkExperienceUncheckedUpdateWithoutApplicantInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    applicationId?: StringFieldUpdateOperationsInput | string
-    company?: StringFieldUpdateOperationsInput | string
-    position?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    description?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type WorkExperienceUncheckedUpdateManyWithoutApplicantInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    applicationId?: StringFieldUpdateOperationsInput | string
-    company?: StringFieldUpdateOperationsInput | string
-    position?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    description?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type EducationHistoryUpdateWithoutApplicantInput = {
     id?: StringFieldUpdateOperationsInput | string
     institutionName?: StringFieldUpdateOperationsInput | string
@@ -28478,7 +26255,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -28557,7 +26333,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -28569,7 +26344,6 @@ export namespace Prisma {
     program?: ProgramUpdateOneRequiredWithoutApplicationsNestedInput
     payment?: PaymentUpdateOneWithoutApplicationNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicationNestedInput
     admission?: AdmissionUpdateOneWithoutApplicationNestedInput
   }
 
@@ -28589,7 +26363,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -28599,7 +26372,6 @@ export namespace Prisma {
     shortCourseDuration?: NullableStringFieldUpdateOperationsInput | string | null
     payment?: PaymentUncheckedUpdateOneWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicationNestedInput
     admission?: AdmissionUncheckedUpdateOneWithoutApplicationNestedInput
   }
 
@@ -28619,7 +26391,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -28675,7 +26446,6 @@ export namespace Prisma {
     basicsComplete?: boolean
     personalInfoComplete?: boolean
     educationComplete?: boolean
-    workExperienceComplete?: boolean
     programInfoComplete?: boolean
     documentsComplete?: boolean
     declarationComplete?: boolean
@@ -28775,7 +26545,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -28787,7 +26556,6 @@ export namespace Prisma {
     intake?: IntakeUpdateOneWithoutApplicationsNestedInput
     payment?: PaymentUpdateOneWithoutApplicationNestedInput
     documents?: DocumentUpdateManyWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUpdateManyWithoutApplicationNestedInput
     admission?: AdmissionUpdateOneWithoutApplicationNestedInput
   }
 
@@ -28807,7 +26575,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -28817,7 +26584,6 @@ export namespace Prisma {
     shortCourseDuration?: NullableStringFieldUpdateOperationsInput | string | null
     payment?: PaymentUncheckedUpdateOneWithoutApplicationNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutApplicationNestedInput
-    workExperiences?: WorkExperienceUncheckedUpdateManyWithoutApplicationNestedInput
     admission?: AdmissionUncheckedUpdateOneWithoutApplicationNestedInput
   }
 
@@ -28837,7 +26603,6 @@ export namespace Prisma {
     basicsComplete?: BoolFieldUpdateOperationsInput | boolean
     personalInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     educationComplete?: BoolFieldUpdateOperationsInput | boolean
-    workExperienceComplete?: BoolFieldUpdateOperationsInput | boolean
     programInfoComplete?: BoolFieldUpdateOperationsInput | boolean
     documentsComplete?: BoolFieldUpdateOperationsInput | boolean
     declarationComplete?: BoolFieldUpdateOperationsInput | boolean
@@ -28941,18 +26706,6 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type WorkExperienceCreateManyApplicationInput = {
-    id?: string
-    applicantId: string
-    company: string
-    position: string
-    startDate: Date | string
-    endDate?: Date | string | null
-    description: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
   export type DocumentUpdateWithoutApplicationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -28983,42 +26736,6 @@ export namespace Prisma {
     applicantId?: StringFieldUpdateOperationsInput | string
     admissionId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type WorkExperienceUpdateWithoutApplicationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    company?: StringFieldUpdateOperationsInput | string
-    position?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    description?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    applicant?: ApplicantUpdateOneRequiredWithoutWorkExperiencesNestedInput
-  }
-
-  export type WorkExperienceUncheckedUpdateWithoutApplicationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    applicantId?: StringFieldUpdateOperationsInput | string
-    company?: StringFieldUpdateOperationsInput | string
-    position?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    description?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type WorkExperienceUncheckedUpdateManyWithoutApplicationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    applicantId?: StringFieldUpdateOperationsInput | string
-    company?: StringFieldUpdateOperationsInput | string
-    position?: StringFieldUpdateOperationsInput | string
-    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    description?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

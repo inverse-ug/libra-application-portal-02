@@ -43,7 +43,7 @@ export function ApplicationProgress({
                 {isCompleted ? <Check className="h-4 w-4" /> : index + 1}
               </div>
               <span
-                className={`text-xs text-center ${
+                className={`text-xs hidden sm:block text-center ${
                   isCurrent
                     ? "font-medium text-blue-600 dark:text-blue-400"
                     : "text-muted-foreground"
@@ -56,7 +56,7 @@ export function ApplicationProgress({
       </div>
 
       {/* Progress line */}
-      <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-200 dark:bg-gray-800 -translate-y-1/2 z-0">
+      {/* <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-200 dark:bg-gray-800 -translate-y-1/2 z-0">
         <div
           className="h-full bg-blue-600 transition-all"
           style={{
@@ -69,7 +69,7 @@ export function ApplicationProgress({
             }`,
           }}
         />
-      </div>
+      </div> */}
     </div>
   );
 }

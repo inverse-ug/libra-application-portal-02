@@ -183,63 +183,6 @@ export async function updateApplicationStep(
   return application;
 }
 
-// Add a new function to update the work experience information
-export async function updateWorkExperience(
-  applicationId: string,
-  userId: string,
-  data: {
-    hasWorkExperience: boolean;
-    workExperiences: {
-      company: string;
-      position: string;
-      startDate: Date;
-      endDate?: Date | null;
-      description: string;
-    }[];
-  }
-) {
-  try {
-    // First delete existing work experiences for this application
-    await prisma.workExperience.deleteMany({
-      where: {
-        applicationId: applicationId,
-      },
-    });
-
-    // Add new work experience records if the applicant has work experience
-    if (data.hasWorkExperience && data.workExperiences.length > 0) {
-      for (const experience of data.workExperiences) {
-        await prisma.workExperience.create({
-          data: {
-            applicationId: applicationId,
-            applicantId: userId,
-            company: experience.company,
-            position: experience.position,
-            startDate: experience.startDate,
-            endDate: experience.endDate,
-            description: experience.description,
-          },
-        });
-      }
-    }
-
-    // Update application progress
-    const application = await prisma.application.update({
-      where: { id: applicationId },
-      data: {
-        workExperienceComplete: true,
-      },
-    });
-
-    revalidatePath(`/apply/${applicationId}`);
-
-    return application;
-  } catch (error) {
-    console.error("Error updating work experience:", error);
-    throw error;
-  }
-}
-
 /**
  * Submit application
  */
@@ -486,4 +429,87 @@ export async function updateDeclaration(
   revalidatePath(`/apply/${applicationId}`);
 
   return application;
+}
+
+/**
+ * Fetch applicant data by ID
+ * Uses Prisma directly instead of an API route
+ */
+export async function getApplicantById(id: string) {
+  try {
+    // Check authentication
+    const session = await auth();
+    if (!session?.user) {
+      throw new Error("Unauthorized");
+    }
+
+    // Only allow users to access their own data unless they're an admin
+    if (session.user.id !== id && session.user.role !== "admin") {
+      throw new Error("Forbidden");
+    }
+
+    // Fetch the applicant with education history
+    const applicant = await prisma.applicant.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        educationHistory: true,
+        applications: {
+          include: {
+            program: true,
+            intake: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 1,
+        },
+      },
+    });
+
+    if (!applicant) {
+      throw new Error("Applicant not found");
+    }
+
+    return applicant;
+  } catch (error) {
+    console.error("Error fetching applicant:", error);
+    throw error;
+  }
+}
+
+/**
+ * Update applicant data
+ */
+export async function updateApplicant(id: string, data: any) {
+  try {
+    // Check authentication
+    const session = await auth();
+    if (!session?.user) {
+      throw new Error("Unauthorized");
+    }
+
+    // Only allow users to update their own data unless they're an admin
+    if (session.user.id !== id && session.user.role !== "admin") {
+      throw new Error("Forbidden");
+    }
+
+    // Update the applicant
+    const updatedApplicant = await prisma.applicant.update({
+      where: {
+        id: id,
+      },
+      data: data,
+    });
+
+    // Revalidate paths that might display this data
+    revalidatePath(`/profile`);
+    revalidatePath(`/my-applications`);
+
+    return updatedApplicant;
+  } catch (error) {
+    console.error("Error updating applicant:", error);
+    throw error;
+  }
 }

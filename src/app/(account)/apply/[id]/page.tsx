@@ -26,7 +26,6 @@ const STEPS = [
   { id: "basics", label: "Basics" },
   { id: "personal", label: "Personal Info" },
   { id: "education", label: "Education" },
-  { id: "work", label: "Work Experience" },
   { id: "sponsor", label: "Sponsor & Next of Kin" },
   { id: "documents", label: "Documents" },
   { id: "review", label: "Review" },

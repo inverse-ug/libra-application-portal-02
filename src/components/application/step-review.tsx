@@ -209,44 +209,6 @@ export function ApplicationStepReview({
           </CardContent>
         </Card>
 
-        {/* Work Experience */}
-        <Card className="rounded-lg overflow-hidden">
-          <CardHeader className="bg-amber-50/50 dark:bg-amber-950/20 pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <div className="h-6 w-6 bg-amber-100 dark:bg-amber-900/30 rounded-md flex items-center justify-center text-amber-600 dark:text-amber-400">
-                <Briefcase className="h-4 w-4" />
-              </div>
-              Work Experience
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-4">
-            {application.workExperiences &&
-            application.workExperiences.length > 0 ? (
-              <div className="space-y-4">
-                {application.workExperiences.map((exp: any) => (
-                  <div key={exp.id} className="border rounded-lg p-3">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-medium">{exp.position}</h4>
-                      <Badge variant="outline" className="rounded-md">
-                        {exp.company}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {formatDate(exp.startDate)} -{" "}
-                      {exp.endDate ? formatDate(exp.endDate) : "Present"}
-                    </p>
-                    <p className="text-sm">{exp.description}</p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-muted-foreground">
-                No work experience provided.
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
         {/* Sponsor & Next of Kin */}
         <Card className="rounded-lg overflow-hidden">
           <CardHeader className="bg-orange-50/50 dark:bg-orange-950/20 pb-3">

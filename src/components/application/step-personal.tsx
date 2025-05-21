@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { updatePersonalInfo } from "@/app/actions/application-actions";
 import { Loader2 } from "lucide-react";
 import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar } from "@/components/calendar";
 import {
   Popover,
   PopoverContent,
@@ -74,7 +74,15 @@ export function ApplicationStepPersonal({
   async function onSubmit(data: PersonalInfoValues) {
     try {
       setIsSubmitting(true);
-      await updatePersonalInfo(application.id, user.id, data);
+      await updatePersonalInfo(application.id, user.id, {
+        firstName: data.firstName,
+        middleName: data.middleName ?? null,
+        surname: data.surname,
+        dateOfBirth: data.dateOfBirth ?? null,
+        gender: data.gender ?? null,
+        nationality: data.nationality ?? null,
+        physicalAddress: data.physicalAddress ?? null,
+      });
       onComplete();
     } catch (error) {
       console.error("Error updating personal information:", error);

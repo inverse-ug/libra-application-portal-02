@@ -16,18 +16,25 @@ import type { Intake } from "@/app/generated/prisma";
 type IntakeCardProps = {
   intake: Intake & {
     applications?: any[];
-    programs?: any[]; // Add this to fix the TypeScript error
+    programs?: any[];
   };
   userApplications?: any[];
 };
 
 export function IntakeCard({ intake, userApplications = [] }: IntakeCardProps) {
-  // Check if user has applied to this intake
-  const userApplication = userApplications?.find((app) =>
-    typeof app.intake === "object"
-      ? app.intake.id === intake.id
-      : app.intakeId === intake.id
-  );
+  // Check if user has applied to this intake - with additional null checks
+  const userApplication = userApplications?.find((app) => {
+    // First check if app exists
+    if (!app) return false;
+
+    // Then check if app.intake is an object
+    if (typeof app.intake === "object" && app.intake) {
+      return app.intake.id === intake.id;
+    }
+
+    // Otherwise check intakeId
+    return app.intakeId === intake.id;
+  });
 
   const applied = Boolean(userApplication);
   const paid = applied && userApplication?.payment?.status === "COMPLETED";

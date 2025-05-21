@@ -18,8 +18,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useUser } from "@/hooks/use-user";
-import { useStudent } from "@/hooks/use-student";
+import { useApplicant } from "@/hooks/use-applicant";
 import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
 
 interface UserInfoModalProps {
   open: boolean;
@@ -28,11 +29,11 @@ interface UserInfoModalProps {
 
 export function UserInfoModal({ open, onOpenChange }: UserInfoModalProps) {
   const { user, isLoading: isUserLoading } = useUser();
-  const { student, isLoading: isStudentLoading } = useStudent(
+  const { applicant, isLoading: isApplicantLoading } = useApplicant(
     user?.id ? String(user?.id) : undefined
   );
 
-  const isLoading = isUserLoading || isStudentLoading;
+  const isLoading = isUserLoading || isApplicantLoading;
 
   // Get initials for avatar
   const getInitials = (name: string) => {
@@ -56,24 +57,21 @@ export function UserInfoModal({ open, onOpenChange }: UserInfoModalProps) {
     return user.email;
   };
 
-  // // Function to determine which ID to display
-  // const getDisplayId = () => {
-  //   // Prioritize Student ID if available
-  //   if (student?.studentId) {
-  //     return {
-  //       label: "Student ID",
-  //       value: student.studentId,
-  //     };
-  //   }
+  // Get the most recent program the applicant applied for
+  const getProgram = () => {
+    if (!applicant?.applications || applicant.applications.length === 0) {
+      return "Not Enrolled";
+    }
 
-  //   // Fall back to Account ID
-  //   return {
-  //     label: "Account ID",
-  //     value: user?.accountId || "Not Available",
-  //   };
-  // };
+    const latestApplication = applicant.applications[0];
+    return latestApplication.program?.title || "Unknown Program";
+  };
 
-  // const displayId = getDisplayId();
+  // Format date for display
+  const formatDate = (date: Date | string | undefined) => {
+    if (!date) return "Not Available";
+    return format(new Date(date), "PPP"); // Localized date format
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -100,13 +98,13 @@ export function UserInfoModal({ open, onOpenChange }: UserInfoModalProps) {
                 user?.name || "Unknown User"
               )}
             </h2>
-            {/* <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {isLoading ? (
                 <Skeleton className="h-4 w-40" />
               ) : (
-                `${displayId.label}: ${displayId.value}`
+                `Applicant ID: ${applicant?.id?.substring(0, 8) || "Not Available"}`
               )}
-            </p> */}
+            </p>
           </div>
 
           <Separator className="my-4" />
@@ -120,14 +118,7 @@ export function UserInfoModal({ open, onOpenChange }: UserInfoModalProps) {
                   <Skeleton className="h-4 w-40" />
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    {student?.enrolledPrograms?.length
-                      ? typeof student.enrolledPrograms[0] === "string"
-                        ? "Enrolled"
-                        : typeof student.enrolledPrograms[0] === "object" &&
-                            "name" in student.enrolledPrograms[0]
-                          ? student.enrolledPrograms[0].name
-                          : "Unknown Program"
-                      : "Not Enrolled"}
+                    {getProgram()}
                   </p>
                 )}
               </div>
@@ -136,14 +127,12 @@ export function UserInfoModal({ open, onOpenChange }: UserInfoModalProps) {
             <div className="flex items-start gap-3">
               <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
-                <p className="text-sm font-medium">Enrollment Date</p>
+                <p className="text-sm font-medium">Registration Date</p>
                 {isLoading ? (
                   <Skeleton className="h-4 w-40" />
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    {student?.createdAt
-                      ? new Date(student.createdAt).toLocaleDateString()
-                      : "Not Available"}
+                    {formatDate(applicant?.createdAt)}
                   </p>
                 )}
               </div>
@@ -171,7 +160,7 @@ export function UserInfoModal({ open, onOpenChange }: UserInfoModalProps) {
                   <Skeleton className="h-4 w-40" />
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    {user?.phoneNumber || "Not Available"}
+                    {applicant?.phone || user?.phone || "Not Available"}
                   </p>
                 )}
               </div>
@@ -185,7 +174,7 @@ export function UserInfoModal({ open, onOpenChange }: UserInfoModalProps) {
                   <Skeleton className="h-4 w-40" />
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    {student?.address || "Not Available"}
+                    {applicant?.physicalAddress || "Not Available"}
                   </p>
                 )}
               </div>
@@ -199,7 +188,11 @@ export function UserInfoModal({ open, onOpenChange }: UserInfoModalProps) {
                   <Skeleton className="h-4 w-20" />
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    {student?.isAdmitted ? "Admitted" : "Not Admitted"}
+                    {applicant?.applications?.some(
+                      (app) => app.status === "ACCEPTED"
+                    )
+                      ? "Admitted"
+                      : "Not Admitted"}
                   </p>
                 )}
               </div>

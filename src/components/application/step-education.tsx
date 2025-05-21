@@ -76,10 +76,10 @@ export function ApplicationStepEducation({
       records:
         existingEducation.length > 0
           ? existingEducation.map((record: any) => ({
-              institutionName: record.institutionName,
-              startYear: record.startYear,
-              endYear: record.endYear,
-              qualification: record.qualification,
+              institutionName: record.institutionName ?? "",
+              startYear: record.startYear ?? new Date().getFullYear(),
+              endYear: record.endYear ?? undefined,
+              qualification: record.qualification ?? "",
             }))
           : [
               {
@@ -100,7 +100,14 @@ export function ApplicationStepEducation({
   async function onSubmit(data: EducationValues) {
     try {
       setIsSubmitting(true);
-      await addEducationHistory(application.id, user.id, data);
+      await addEducationHistory(application.id, user.id, {
+        records: data.records.map((record) => ({
+          institutionName: record.institutionName ?? "",
+          startYear: record.startYear ?? new Date().getFullYear(),
+          endYear: record.endYear ?? undefined,
+          qualification: record.qualification ?? "",
+        })),
+      });
       onComplete();
     } catch (error) {
       console.error("Error updating education information:", error);
@@ -258,36 +265,40 @@ export function ApplicationStepEducation({
             ))}
           </div>
 
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              append({
-                institutionName: "",
-                startYear: new Date().getFullYear(),
-                endYear: undefined,
-                qualification: "",
-              })
-            }
-            className="rounded-lg">
-            <Plus className="h-4 w-4 mr-1" />
-            Add Another Education Record
-          </Button>
+          <div className="flex flex-col gap-4">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                append({
+                  institutionName: "",
+                  startYear: new Date().getFullYear(),
+                  endYear: undefined,
+                  qualification: "",
+                })
+              }
+              className="rounded-lg">
+              <Plus className="h-4 w-4 mr-1" />
+              Add Another Education Record
+            </Button>
 
-          {form.formState.errors.root && (
-            <p className="text-sm font-medium text-destructive">
-              {form.formState.errors.root.message}
-            </p>
-          )}
+            {form.formState.errors.root && (
+              <p className="text-sm font-medium text-destructive">
+                {form.formState.errors.root.message}
+              </p>
+            )}
 
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="rounded-lg bg-blue-600 hover:bg-blue-700">
-            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isSubmitting ? "Saving..." : "Save and Continue"}
-          </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="rounded-lg bg-blue-600 hover:bg-blue-700">
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {isSubmitting ? "Saving..." : "Save and Continue"}
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

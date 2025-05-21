@@ -29,7 +29,6 @@ model Applicant {
   admissions          Admission[]
   documents           Document[]
   notifications       Notification[]
-  workExperiences     WorkExperience[]
 
   // Personal Information
   firstName       String?
@@ -138,23 +137,22 @@ model Category {
 }
 
 model Application {
-  id              String            @id @default(cuid())
-  applicant       Applicant         @relation(fields: [applicantId], references: [id])
-  applicantId     String
-  program         Program           @relation(fields: [programId], references: [id])
-  programId       String
-  intake          Intake?           @relation(fields: [intakeId], references: [id])
-  intakeId        String?
-  status          ApplicationStatus @default(DRAFT)
-  payment         Payment?
-  documents       Document[]
-  workExperiences WorkExperience[]
-  notes           String?
-  reviewedBy      String?
-  reviewedAt      DateTime?
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  admission       Admission?
+  id          String            @id @default(cuid())
+  applicant   Applicant         @relation(fields: [applicantId], references: [id])
+  applicantId String
+  program     Program           @relation(fields: [programId], references: [id])
+  programId   String
+  intake      Intake?           @relation(fields: [intakeId], references: [id])
+  intakeId    String?
+  status      ApplicationStatus @default(DRAFT)
+  payment     Payment?
+  documents   Document[]
+  notes       String?
+  reviewedBy  String?
+  reviewedAt  DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  admission   Admission?
 
   // Application Progress
   completedSteps String[] // Array of completed step IDs
@@ -162,13 +160,12 @@ model Application {
   progress       Int      @default(0) // Progress percentage (0-100)
 
   // Application Form Data
-  basicsComplete         Boolean @default(false) // Added this field
-  personalInfoComplete   Boolean @default(false)
-  educationComplete      Boolean @default(false)
-  workExperienceComplete Boolean @default(false)
-  programInfoComplete    Boolean @default(false)
-  documentsComplete      Boolean @default(false)
-  declarationComplete    Boolean @default(false)
+  basicsComplete       Boolean @default(false) // Added this field
+  personalInfoComplete Boolean @default(false)
+  educationComplete    Boolean @default(false)
+  programInfoComplete  Boolean @default(false)
+  documentsComplete    Boolean @default(false)
+  declarationComplete  Boolean @default(false)
 
   // Declaration
   declarationSigned Boolean   @default(false)
@@ -177,24 +174,6 @@ model Application {
   // For short courses
   isShortCourse       Boolean @default(false)
   shortCourseDuration String? // "3 months" or "6 months"
-}
-
-model WorkExperience {
-  id            String      @id @default(cuid())
-  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  applicationId String
-  applicant     Applicant   @relation(fields: [applicantId], references: [id], onDelete: Cascade)
-  applicantId   String
-  company       String
-  position      String
-  startDate     DateTime
-  endDate       DateTime?
-  description   String
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-
-  @@index([applicationId])
-  @@index([applicantId])
 }
 
 model EducationHistory {

@@ -5,6 +5,7 @@ import { getCurrentApplicant } from "@/lib/user-utils";
 
 export default async function Home() {
   const user = await getCurrentApplicant();
+  console.log(user);
 
   // Server-side greeting
   const timeOfDay = getTimeOfDay();

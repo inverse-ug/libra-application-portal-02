@@ -5,9 +5,7 @@ import prisma from "../../../lib/prisma";
  * Get all programs
  */
 export async function getPrograms(options?: { intakeId?: string }) {
-  const where: any = {
-    isShortCourse: false,
-  };
+  const where: any = {};
 
   // If intakeId is provided, filter programs by intake
   if (options?.intakeId) {
@@ -16,6 +14,9 @@ export async function getPrograms(options?: { intakeId?: string }) {
         id: options.intakeId,
       },
     };
+  } else {
+    // Only filter by isShortCourse when not filtering by intake
+    where.isShortCourse = false;
   }
 
   const programs = await prisma.program.findMany({
