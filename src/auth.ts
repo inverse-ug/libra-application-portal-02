@@ -1,11 +1,12 @@
-import NextAuth, { type DefaultSession } from "next-auth";
+import NextAuth, { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { formatUgandanPhoneNumber } from "@/lib/auth-utils";
 import bcrypt from "bcryptjs";
-import type { Adapter } from "next-auth/adapters";
+import { Adapter } from "next-auth/adapters";
+import { JWT } from "next-auth/jwt";
 import { prisma } from "@/lib/prisma";
-import type { Applicant } from "@prisma/client";
+import { Applicant } from "@prisma/client";
 
 declare module "next-auth" {
   interface User {
@@ -147,9 +148,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-  // Only specify strategy, let NextAuth handle the rest with defaults
+
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
   },
   pages: {
     signIn: "/login",
@@ -178,13 +181,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session;
     },
-    async redirect({ url, baseUrl }) {
-      // Allows relative callback URLs
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      // Allows callback URLs on the same origin
-      else if (new URL(url).origin === baseUrl) return url;
-      return baseUrl;
-    },
   },
   events: {
     async signIn({ user }) {
@@ -202,7 +198,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async signOut({}) {
       // Optional: Add any cleanup on signout if needed
+      // Note: Changed parameter from token to session to match the event type
     },
   },
-  debug: true, // Enable in both development and production temporarily
+  debug: process.env.NODE_ENV === "development",
 });
