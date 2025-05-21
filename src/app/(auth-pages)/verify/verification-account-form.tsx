@@ -30,14 +30,14 @@ const verificationSchema = z.object({
     .regex(/^\d+$/, "Code must contain only numbers"),
 });
 
-export default function VerifyAccountForm() {
+// Component that uses useSearchParams()
+export default function VerificationForm() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const phone = searchParams.get("phone");
   const [isResending, setIsResending] = useState(false);
 
   const identifier = email || phone;
-  const verificationType = email ? "email" : "phone";
 
   const form = useForm<z.infer<typeof verificationSchema>>({
     resolver: zodResolver(verificationSchema),
