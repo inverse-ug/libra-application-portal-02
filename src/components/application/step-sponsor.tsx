@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -59,23 +59,58 @@ export function ApplicationStepSponsor({
   const form = useForm<SponsorValues>({
     resolver: zodResolver(sponsorSchema),
     defaultValues: {
-      sponsorName: user?.sponsorName || "",
-      sponsorRelationship: user?.sponsorRelationship || "",
-      sponsorOccupation: user?.sponsorOccupation || "",
-      sponsorAddress: user?.sponsorAddress || "",
-      sponsorPhone: user?.sponsorPhone || "",
+      sponsorName: user?.sponsorName ?? "",
+      sponsorRelationship: user?.sponsorRelationship ?? "",
+      sponsorOccupation: user?.sponsorOccupation ?? "",
+      sponsorAddress: user?.sponsorAddress ?? "",
+      sponsorPhone: user?.sponsorPhone ?? "",
 
-      nextOfKinName: user?.nextOfKinName || "",
-      nextOfKinRelationship: user?.nextOfKinRelationship || "",
-      nextOfKinOccupation: user?.nextOfKinOccupation || "",
-      nextOfKinAddress: user?.nextOfKinAddress || "",
-      nextOfKinPhone: user?.nextOfKinPhone || "",
+      nextOfKinName: user?.nextOfKinName ?? "",
+      nextOfKinRelationship: user?.nextOfKinRelationship ?? "",
+      nextOfKinOccupation: user?.nextOfKinOccupation ?? "",
+      nextOfKinAddress: user?.nextOfKinAddress ?? "",
+      nextOfKinPhone: user?.nextOfKinPhone ?? "",
     },
   });
 
-  async function onSubmit(data: SponsorValues) {
+  // Update form values when user data changes
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        sponsorName: user.sponsorName ?? "",
+        sponsorRelationship: user.sponsorRelationship ?? "",
+        sponsorOccupation: user.sponsorOccupation ?? "",
+        sponsorAddress: user.sponsorAddress ?? "",
+        sponsorPhone: user.sponsorPhone ?? "",
+
+        nextOfKinName: user.nextOfKinName ?? "",
+        nextOfKinRelationship: user.nextOfKinRelationship ?? "",
+        nextOfKinOccupation: user.nextOfKinOccupation ?? "",
+        nextOfKinAddress: user.nextOfKinAddress ?? "",
+        nextOfKinPhone: user.nextOfKinPhone ?? "",
+      });
+    }
+  }, [user, form]);
+
+  async function onSubmit(formData: SponsorValues) {
     try {
       setIsSubmitting(true);
+
+      // Ensure all required fields have values before submitting
+      const data = {
+        sponsorName: formData.sponsorName ?? "",
+        sponsorRelationship: formData.sponsorRelationship ?? "",
+        sponsorOccupation: formData.sponsorOccupation ?? "",
+        sponsorAddress: formData.sponsorAddress ?? "",
+        sponsorPhone: formData.sponsorPhone ?? "",
+
+        nextOfKinName: formData.nextOfKinName ?? "",
+        nextOfKinRelationship: formData.nextOfKinRelationship ?? "",
+        nextOfKinOccupation: formData.nextOfKinOccupation ?? "",
+        nextOfKinAddress: formData.nextOfKinAddress ?? "",
+        nextOfKinPhone: formData.nextOfKinPhone ?? "",
+      };
+
       await updateSponsorAndNextOfKin(application.id, user.id, data);
       onComplete();
     } catch (error) {
