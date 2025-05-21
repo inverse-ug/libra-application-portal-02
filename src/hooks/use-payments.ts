@@ -1,6 +1,6 @@
 "use client";
 
-import { Application } from "@/app/generated/prisma";
+import { Application } from "@prisma/client";
 import { useState, useEffect } from "react";
 
 export function useApplicationPayments(userId?: string) {

@@ -106,7 +106,7 @@ export default function VerificationForm() {
               control={form.control}
               name="verificationCode"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col items-center">
                   <FormLabel className="text-center">
                     Verification Code
                   </FormLabel>

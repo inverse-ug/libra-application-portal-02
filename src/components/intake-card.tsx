@@ -11,7 +11,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import type { Intake } from "@/app/generated/prisma";
+import { Intake } from "@prisma/client";
 
 type IntakeCardProps = {
   intake: Intake & {
