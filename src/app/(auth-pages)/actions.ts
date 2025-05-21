@@ -85,9 +85,8 @@ export async function registerApplicantPhone(
     const name = formData.get("name") as string;
     const phone = formData.get("phone") as string;
     const password = formData.get("password") as string;
-    const program = formData.get("program") as string;
 
-    validateFormFields({ name, phone, password, program });
+    validateFormFields({ name, phone, password });
 
     const formattedPhone = formatUgandanPhoneNumber(phone);
 
