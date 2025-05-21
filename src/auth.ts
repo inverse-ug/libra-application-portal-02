@@ -204,5 +204,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Optional: Add any cleanup on signout if needed
     },
   },
-  debug: process.env.NODE_ENV === "development",
+  debug: true, // Enable in both development and production temporarily
 });
