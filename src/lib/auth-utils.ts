@@ -1,21 +1,11 @@
-// lib/auth-utils.ts
 import bcrypt from "bcryptjs";
 import { Resend } from "resend";
-import AfricasTalking from "africastalking";
 import { render } from "@react-email/render";
 import { VerificationEmail } from "@/components/emails/verification-email";
 import { PasswordResetEmail } from "@/components/emails/password-reset-email";
 import { prisma } from "./prisma";
 
 const resend = new Resend(process.env.RESEND_API_KEY!);
-
-// Initialize Africa's Talking
-const africastalking = AfricasTalking({
-  apiKey: process.env.AFRICASTALKING_API_KEY!,
-  username: process.env.AFRICASTALKING_USERNAME!,
-});
-
-const sms = africastalking.SMS;
 
 export const formatUgandanPhoneNumber = (phone: string): string => {
   if (!phone) throw new Error("Phone number is required for application");
@@ -62,15 +52,21 @@ export const sendSMS = async (
 ): Promise<boolean> => {
   try {
     const formattedNumber = formatUgandanPhoneNumber(phoneNumber);
-    const fullMessage = `Libra Institute: ${message}\nReply STOP to opt out`;
 
-    await sms.send({
-      to: [formattedNumber],
-      message: fullMessage,
-      from: process.env.AFRICASTALKING_SENDER_ID || "LIBRA",
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/sms/send`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        phoneNumber: formattedNumber,
+        message,
+      }),
     });
 
-    console.log("SMS sent to applicant:", formattedNumber);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to send SMS");
+    }
+
     return true;
   } catch (error: any) {
     console.error("SMS send error:", error.message);
