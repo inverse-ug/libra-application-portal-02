@@ -306,25 +306,34 @@ export async function loginApplicant(
     }
 
     // Attempt login with NextAuth
-    const result = await signIn("credentials", {
-      identifier,
-      password,
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+        identifier,
+        password,
+        redirect: false,
+      });
 
-    if (result?.error) {
+      if (result?.error) {
+        console.error("NextAuth error:", result.error);
+        return {
+          success: false,
+          message: "Invalid credentials",
+        };
+      }
+
+      // Return success with redirect URL
+      return {
+        success: true,
+        message: "Login successful",
+        redirectUrl: callbackUrl,
+      };
+    } catch (signInError) {
+      console.error("Sign in error:", signInError);
       return {
         success: false,
-        message: "Invalid credentials",
+        message: "Authentication failed",
       };
     }
-
-    // Return success with redirect URL instead of using redirect()
-    return {
-      success: true,
-      message: "Login successful",
-      redirectUrl: callbackUrl,
-    };
   } catch (error: any) {
     console.error("Login error:", error);
 
