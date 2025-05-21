@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import Sidebar from "@/components/sidebar";
 import TopNavigation from "@/components/top-navigation";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Apply | Libra Vocational and Business Institute",
   description: "Application Portal for Libra Vocational and Business Institute",
