@@ -1,437 +1,390 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  BookOpen,
-  Filter,
-  Search,
-  SortAsc,
-  SortDesc,
-  Clock,
-  Tag,
-  X,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogClose,
-} from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { EmptyState } from "@/components/empty-state";
-import { getPrograms } from "@/app/actions/program-actions";
 import { Badge } from "@/components/ui/badge";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  GraduationCap,
+  BookOpen,
+  AlertCircle,
+} from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { getProgramById } from "@/app/actions/program-actions";
+import { useUser } from "@/hooks/use-user";
+import Link from "next/link";
 
-export default function ProgramsPage() {
-  const [programs, setPrograms] = useState<any[]>([]);
+export default function ProgramApplyPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const router = useRouter();
+  const { user } = useUser();
+  const [program, setProgram] = useState<any>(null);
+  const [isShortCourse, setIsShortCourse] = useState(false);
+  const [shortCourseDuration, setShortCourseDuration] =
+    useState<string>("3 months");
+  const [selectedIntake, setSelectedIntake] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortOrder, setSortOrder] = useState<
-    "az" | "za" | "fee-low" | "fee-high"
-  >("az");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [selectedProgram, setSelectedProgram] = useState<any>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const data = await getPrograms();
-        setPrograms(data);
+        const programData = await getProgramById(params.id);
+        setProgram(programData);
 
-        // Extract unique categories
-        const uniqueCategories = Array.from(
-          new Set(
-            data.flatMap(
-              (program) => program.categories?.map((cat: any) => cat.name) || []
-            )
-          )
-        );
-        setCategories(uniqueCategories);
+        // Set default values based on program data
+        if (programData) {
+          // Check if program is available as short course
+          const isShortCourseAvailable = programData.categories?.some(
+            (cat: any) => cat.name === "Short Course"
+          );
+          setIsShortCourse(isShortCourseAvailable && programData.isShortCourse);
+
+          // Set default intake if available
+          if (programData.intakes && programData.intakes.length > 0) {
+            // Find active intake if any
+            const activeIntake = programData.intakes.find(
+              (intake: any) => intake.isActive
+            );
+            setSelectedIntake(
+              activeIntake ? activeIntake.id : programData.intakes[0].id
+            );
+          }
+        }
       } catch (error) {
-        console.error("Error fetching programs:", error);
+        console.error("Error fetching data:", error);
+        setError("Failed to load program details. Please try again.");
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [params.id]);
 
-  // Filter and sort programs
-  const filteredPrograms = programs
-    .filter((program) => {
-      // Filter by search query
-      const matchesSearch =
-        searchQuery === "" ||
-        program.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        program.description?.toLowerCase().includes(searchQuery.toLowerCase());
+  const handleApply = async () => {
+    if (!user) {
+      router.push(
+        "/login?redirect=" + encodeURIComponent(`/programs/${params.id}/apply`)
+      );
+      return;
+    }
 
-      // Filter by category
-      const matchesCategory =
-        !selectedCategory ||
-        program.categories?.some(
-          (cat: any) =>
-            cat.name.toLowerCase() === selectedCategory.toLowerCase()
-        );
+    try {
+      setIsSubmitting(true);
+      setError(null);
 
-      return matchesSearch && matchesCategory;
-    })
-    .sort((a, b) => {
-      switch (sortOrder) {
-        case "za":
-          return b.title.localeCompare(a.title);
-        case "fee-low":
-          return (a.tuitionFee || 0) - (b.tuitionFee || 0);
-        case "fee-high":
-          return (b.tuitionFee || 0) - (a.tuitionFee || 0);
-        case "az":
-        default:
-          return a.title.localeCompare(b.title);
-      }
-    });
+      const applicationData = {
+        programId: program.id,
+        intakeId: isShortCourse ? null : selectedIntake,
+        isShortCourse,
+        shortCourseDuration: isShortCourse ? shortCourseDuration : null,
+      };
 
-  const handleSort = (order: "az" | "za" | "fee-low" | "fee-high") => {
-    setSortOrder(order);
-  };
+      // const result = await createApplication(applicationData);
 
-  // Get sort icon based on current sort order
-  const getSortIcon = () => {
-    switch (sortOrder) {
-      case "az":
-        return <SortAsc className="h-4 w-4 mr-2" />;
-      case "za":
-        return <SortDesc className="h-4 w-4 mr-2" />;
-      case "fee-low":
-      case "fee-high":
-        return <Clock className="h-4 w-4 mr-2" />;
-      default:
-        return <Filter className="h-4 w-4 mr-2" />;
+      // if (result.success) {
+      //   router.push(`/apply/${result.applicationId}`);
+      // } else {
+      //   setError(
+      //     result.message || "Failed to create application. Please try again."
+      //   );
+      // }
+    } catch (error) {
+      console.error("Error creating application:", error);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
-      {/* Page header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">Programs</h1>
-          <p className="text-muted-foreground mt-1">
-            Browse all available academic programs
-          </p>
+  if (isLoading) {
+    return (
+      <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-6">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-8 w-8" />
+          <Skeleton className="h-6 w-32" />
         </div>
+        <Skeleton className="h-64 w-full" />
       </div>
+    );
+  }
 
-      {/* Search and filter */}
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search programs..."
-            className="pl-9 rounded-lg"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <div className="flex gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="rounded-lg">
-                <Tag className="h-4 w-4 mr-2" />
-                {selectedCategory || "All Categories"}
+  if (!program) {
+    return (
+      <div className="p-4 md:p-6 max-w-4xl mx-auto">
+        <Card className="shadow-sm rounded-xl">
+          <CardContent className="p-6">
+            <div className="text-center space-y-2">
+              <h2 className="text-xl font-semibold">Program Not Found</h2>
+              <p className="text-muted-foreground">
+                The program you're looking for doesn't exist or has been
+                removed.
+              </p>
+              <Button asChild className="mt-4 rounded-lg">
+                <Link href="/programs">Browse Programs</Link>
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 rounded-lg" align="end">
-              <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem
-                  onClick={() => setSelectedCategory(null)}
-                  className="rounded-md">
-                  All Categories
-                </DropdownMenuItem>
-                {categories.map((category) => (
-                  <DropdownMenuItem
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className="rounded-md">
-                    {category}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="rounded-lg">
-                {getSortIcon()}
-                {sortOrder === "az" && "A to Z"}
-                {sortOrder === "za" && "Z to A"}
-                {sortOrder === "fee-low" && "Fee: Low to High"}
-                {sortOrder === "fee-high" && "Fee: High to Low"}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 rounded-lg" align="end">
-              <DropdownMenuLabel>Sort Options</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <DropdownMenuItem
-                  onClick={() => handleSort("az")}
-                  className="rounded-md">
-                  <SortAsc className="h-4 w-4 mr-2" />
-                  Alphabetical (A-Z)
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleSort("za")}
-                  className="rounded-md">
-                  <SortDesc className="h-4 w-4 mr-2" />
-                  Alphabetical (Z-A)
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleSort("fee-low")}
-                  className="rounded-md">
-                  <Clock className="h-4 w-4 mr-2" />
-                  Fee (Low to High)
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleSort("fee-high")}
-                  className="rounded-md">
-                  <Clock className="h-4 w-4 mr-2" />
-                  Fee (High to Low)
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-
-      {/* Programs list */}
-      <Card className="shadow-sm rounded-xl overflow-hidden">
-        <CardHeader className="pb-3 border-b">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                <BookOpen className="h-5 w-5" />
-              </div>
-              <CardTitle>Available Programs</CardTitle>
             </div>
-            <CardDescription>
-              {filteredPrograms.length}{" "}
-              {filteredPrograms.length === 1 ? "program" : "programs"} found
-            </CardDescription>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Check if short course is available for this program
+  const isShortCourseAvailable = program.categories?.some(
+    (cat: any) => cat.name === "Short Course"
+  );
+
+  return (
+    <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-6">
+      <div className="flex items-center gap-2">
+        <Button variant="ghost" size="icon" asChild className="rounded-full">
+          <Link href="/programs">
+            <ArrowLeft className="h-5 w-5" />
+            <span className="sr-only">Back to Programs</span>
+          </Link>
+        </Button>
+        <h1 className="text-2xl font-bold">Apply for Program</h1>
+      </div>
+
+      <Card className="shadow-sm rounded-xl overflow-hidden">
+        <CardHeader className="pb-3 bg-indigo-50/50 dark:bg-indigo-950/20 border-b">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+            <div>
+              <CardTitle className="text-xl text-indigo-700 dark:text-indigo-400">
+                {program.title}
+              </CardTitle>
+              <CardDescription>{program.type} Program</CardDescription>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {program.categories?.map((category: any) => (
+                <Badge
+                  key={category.id}
+                  variant="outline"
+                  className="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 rounded-md">
+                  {category.name}
+                </Badge>
+              ))}
+            </div>
           </div>
         </CardHeader>
-        <CardContent className="p-4">
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="border rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <Skeleton className="h-6 w-40" />
-                    <Skeleton className="h-5 w-20" />
-                  </div>
-                  <Skeleton className="h-4 w-full mb-3" />
-                  <Skeleton className="h-4 w-3/4 mb-3" />
-                  <div className="flex gap-2 mb-3">
-                    <Skeleton className="h-6 w-16" />
-                    <Skeleton className="h-6 w-16" />
-                  </div>
-                  <Skeleton className="h-9 w-full" />
-                </div>
-              ))}
+        <CardContent className="p-6 space-y-6">
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-medium mb-2">Program Details</h3>
+              <p className="text-muted-foreground">{program.description}</p>
             </div>
-          ) : filteredPrograms.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredPrograms.map((program) => (
-                <div
-                  key={program.id}
-                  className="border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-                  onClick={() => setSelectedProgram(program)}>
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-medium text-lg">{program.title}</h3>
-                    <Badge
-                      variant="outline"
-                      className="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 rounded-md">
-                      {program.type}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                    {program.description}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-md bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                  <Clock className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Duration</p>
+                  <p className="font-medium">{program.duration}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-md bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                  <BookOpen className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Tuition Fee</p>
+                  <p className="font-medium">
+                    {formatCurrency(program.tuitionFee)}
                   </p>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {program.categories?.map((category: any) => (
-                      <Badge
-                        key={category.id}
-                        variant="secondary"
-                        className="rounded-md">
-                        {category.name}
-                      </Badge>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                  <GraduationCap className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Requirements</p>
+                  <p className="font-medium">{program.requirements}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-md bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                  <Calendar className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    Application Fee
+                  </p>
+                  <p className="font-medium">UGX 50,000 (Non-refundable)</p>
+                </div>
+              </div>
+            </div>
+
+            {isShortCourseAvailable && (
+              <div className="pt-4 border-t">
+                <h3 className="text-lg font-medium mb-2">Program Type</h3>
+                <RadioGroup
+                  value={isShortCourse ? "short" : "regular"}
+                  onValueChange={(v) => setIsShortCourse(v === "short")}
+                  className="space-y-3">
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem
+                      value="regular"
+                      id="regular"
+                      className="mt-1"
+                    />
+                    <div className="grid gap-1.5">
+                      <Label htmlFor="regular" className="font-medium">
+                        Regular Program
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Apply for the full {program.type.toLowerCase()} program
+                        through a specific intake period.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem value="short" id="short" className="mt-1" />
+                    <div className="grid gap-1.5">
+                      <Label htmlFor="short" className="font-medium">
+                        Short Course
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        Apply for a 3-6 month short course version of this
+                        program.
+                      </p>
+                    </div>
+                  </div>
+                </RadioGroup>
+              </div>
+            )}
+
+            {isShortCourse && isShortCourseAvailable ? (
+              <div className="pt-4 border-t">
+                <h3 className="text-lg font-medium mb-2">
+                  Short Course Duration
+                </h3>
+                <RadioGroup
+                  value={shortCourseDuration}
+                  onValueChange={setShortCourseDuration}
+                  className="space-y-3">
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem
+                      value="3 months"
+                      id="3months"
+                      className="mt-1"
+                    />
+                    <Label htmlFor="3months">3 Months</Label>
+                  </div>
+
+                  <div className="flex items-start space-x-2">
+                    <RadioGroupItem
+                      value="6 months"
+                      id="6months"
+                      className="mt-1"
+                    />
+                    <Label htmlFor="6months">6 Months</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            ) : (
+              <div className="pt-4 border-t">
+                <h3 className="text-lg font-medium mb-2">Select Intake</h3>
+                {program.intakes && program.intakes.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {program.intakes.map((intake: any) => (
+                      <div
+                        key={intake.id}
+                        className={`border rounded-lg p-3 cursor-pointer transition-colors ${
+                          selectedIntake === intake.id
+                            ? "border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/20"
+                            : "hover:border-indigo-300 dark:hover:border-indigo-700"
+                        }`}
+                        onClick={() => setSelectedIntake(intake.id)}>
+                        <div className="flex items-center justify-between">
+                          <p className="font-medium">{intake.name}</p>
+                          <div
+                            className={`h-4 w-4 rounded-full ${
+                              selectedIntake === intake.id
+                                ? "bg-indigo-500 ring-2 ring-indigo-200 dark:ring-indigo-800"
+                                : "border border-gray-300 dark:border-gray-600"
+                            }`}
+                          />
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {new Date(intake.startDate).toLocaleDateString()} -{" "}
+                          {new Date(intake.endDate).toLocaleDateString()}
+                        </p>
+                        {intake.isActive && (
+                          <Badge className="mt-2 bg-green-100 text-green-800 border-green-200 rounded-md">
+                            Active
+                          </Badge>
+                        )}
+                      </div>
                     ))}
                   </div>
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm">
-                      <span className="font-medium">Duration:</span>{" "}
-                      {program.duration}
-                    </div>
-                    <Button variant="outline" size="sm" className="rounded-lg">
-                      View Details
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyState
-              icon={
-                <div className="h-12 w-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                  <BookOpen className="h-6 w-6" />
-                </div>
+                ) : (
+                  <Alert className="rounded-lg">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>No intakes available</AlertTitle>
+                    <AlertDescription>
+                      There are currently no intakes for this program. Please
+                      check back later or consider applying for a short course
+                      if available.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </div>
+            )}
+
+            {error && (
+              <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-400 p-3 rounded-lg">
+                {error}
+              </div>
+            )}
+          </div>
+
+          <div className="pt-4 border-t flex flex-col sm:flex-row gap-3 justify-end">
+            <Button variant="outline" asChild className="rounded-lg">
+              <Link href="/programs">Cancel</Link>
+            </Button>
+            <Button
+              onClick={handleApply}
+              disabled={
+                isSubmitting ||
+                (!isShortCourse &&
+                  (!selectedIntake ||
+                    !program.intakes ||
+                    program.intakes.length === 0))
               }
-              title="No programs found"
-              description={
-                searchQuery || selectedCategory
-                  ? "Try adjusting your search or filters to find what you're looking for."
-                  : "There are currently no programs available. Check back later for new programs."
-              }
-              actionLabel={
-                searchQuery || selectedCategory ? "Clear filters" : undefined
-              }
-              actionOnClick={
-                searchQuery || selectedCategory
-                  ? () => {
-                      setSearchQuery("");
-                      setSelectedCategory(null);
-                    }
-                  : undefined
-              }
-            />
-          )}
+              className="bg-indigo-600 hover:bg-indigo-700 rounded-lg">
+              {isSubmitting ? "Processing..." : "Continue to Application"}
+            </Button>
+          </div>
         </CardContent>
       </Card>
-
-      {/* Program Details Dialog */}
-      <Dialog
-        open={!!selectedProgram}
-        onOpenChange={(open) => !open && setSelectedProgram(null)}>
-        <DialogContent className="sm:max-w-3xl rounded-xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <div className="h-6 w-6 bg-indigo-100 dark:bg-indigo-900/30 rounded-md flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                <BookOpen className="h-4 w-4" />
-              </div>
-              {selectedProgram?.title}
-            </DialogTitle>
-            <DialogDescription>
-              {selectedProgram?.type} Program • {selectedProgram?.duration}
-            </DialogDescription>
-          </DialogHeader>
-
-          {selectedProgram && (
-            <div className="space-y-4">
-              <div className="flex flex-wrap gap-2">
-                {selectedProgram.categories?.map((category: any) => (
-                  <Badge
-                    key={category.id}
-                    variant="outline"
-                    className="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 rounded-md">
-                    {category.name}
-                  </Badge>
-                ))}
-              </div>
-
-              <p className="text-muted-foreground">
-                {selectedProgram.description}
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-md bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                    <Clock className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Duration</p>
-                    <p className="font-medium">{selectedProgram.duration}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-md bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                    <BookOpen className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Tuition Fee</p>
-                    <p className="font-medium">
-                      {formatCurrency(selectedProgram.tuitionFee)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t">
-                <h3 className="font-medium mb-2">Requirements</h3>
-                <p className="text-muted-foreground">
-                  {selectedProgram.requirements}
-                </p>
-              </div>
-
-              {selectedProgram.intakes &&
-                selectedProgram.intakes.length > 0 && (
-                  <div className="pt-4 border-t">
-                    <h3 className="font-medium mb-2">Available Intakes</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {selectedProgram.intakes.map((intake: any) => (
-                        <div key={intake.id} className="border rounded-lg p-3">
-                          <div className="font-medium">{intake.name}</div>
-                          <p className="text-sm text-muted-foreground">
-                            {new Date(intake.startDate).toLocaleDateString()} -{" "}
-                            {new Date(intake.endDate).toLocaleDateString()}
-                          </p>
-                          {intake.isActive && (
-                            <Badge className="mt-2 bg-green-100 text-green-800 border-green-200 rounded-md">
-                              Active
-                            </Badge>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-              <div className="flex justify-end pt-4 border-t">
-                <DialogClose asChild>
-                  <Button variant="outline" className="rounded-lg">
-                    <X className="h-4 w-4 mr-2" />
-                    Close
-                  </Button>
-                </DialogClose>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

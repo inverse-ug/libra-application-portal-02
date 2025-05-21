@@ -30,7 +30,11 @@ export async function generateApplicationPDF(applicationId: string) {
     }
 
     if (application.applicant.email !== session.user.email) {
-      return { success: false, message: "Unauthorized" };
+      return {
+        success: false,
+        message:
+          "Unauthorized - You don't have permission to access this application",
+      };
     }
 
     // Return the URL to the PDF endpoint
@@ -67,7 +71,11 @@ export async function printApplication(applicationId: string) {
     }
 
     if (application.applicant.email !== session.user.email) {
-      return { success: false, message: "Unauthorized" };
+      return {
+        success: false,
+        message:
+          "Unauthorized - You don't have permission to access this application",
+      };
     }
 
     // Return success - the actual printing will be handled client-side

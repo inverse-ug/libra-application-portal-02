@@ -65,3 +65,50 @@ export async function getCategories() {
 
   return categories;
 }
+
+/**
+ * Get all short courses
+ */
+export async function getShortCourses() {
+  const shortCourses = await prisma.program.findMany({
+    where: {
+      isShortCourse: true,
+    },
+    include: {
+      categories: true,
+    },
+    orderBy: {
+      title: "asc",
+    },
+  });
+
+  return shortCourses;
+}
+
+/**
+ * Get programs by category
+ */
+export async function getProgramsByCategory(categoryId: string) {
+  const programs = await prisma.program.findMany({
+    where: {
+      categories: {
+        some: {
+          id: categoryId,
+        },
+      },
+    },
+    include: {
+      categories: true,
+      intakes: {
+        where: {
+          isActive: true,
+        },
+      },
+    },
+    orderBy: {
+      title: "asc",
+    },
+  });
+
+  return programs;
+}

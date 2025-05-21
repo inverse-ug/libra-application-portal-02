@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "../../../auth";
 import prisma from "../../../lib/prisma";
+import { DocumentType } from "../generated/prisma";
 
 /**
  * Get user applications
@@ -139,10 +140,7 @@ export async function updateApplicationStep(
   const application = await prisma.application.update({
     where: { id: applicationId },
     data: {
-      currentStep: data.currentStep,
-      completedSteps: data.completedSteps,
-      progress: data.progress,
-      ...data, // Spread additional fields
+      ...data, // Spread all fields, including currentStep, completedSteps, progress, and any additional fields
     },
   });
 
@@ -340,28 +338,40 @@ export async function uploadDocument(
     url: string;
   }
 ) {
-  // Add document
-  await prisma.document.create({
-    data: {
-      applicantId: userId,
-      applicationId: applicationId,
-      name: data.name,
-      type: data.type as any,
-      url: data.url,
-    },
-  });
+  try {
+    // Add document
+    const document = await prisma.document.create({
+      data: {
+        applicantId: userId,
+        applicationId: applicationId,
+        name: data.name,
+        type: data.type as DocumentType,
+        url: data.url,
+      },
+    });
 
-  // Update application progress
-  const application = await prisma.application.update({
-    where: { id: applicationId },
-    data: {
-      documentsComplete: true,
-    },
-  });
+    // Update application progress
+    const application = await prisma.application.update({
+      where: { id: applicationId },
+      data: {
+        documentsComplete: true,
+      },
+    });
 
-  revalidatePath(`/apply/${applicationId}`);
+    revalidatePath(`/apply/${applicationId}`);
 
-  return application;
+    return {
+      success: true,
+      message: "Document uploaded successfully",
+      document: document,
+    };
+  } catch (error) {
+    console.error("Error uploading document:", error);
+    return {
+      success: false,
+      message: "Failed to upload document",
+    };
+  }
 }
 
 /**

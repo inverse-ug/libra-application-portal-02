@@ -9,6 +9,7 @@ import {
   CheckCircle,
   XCircle,
   Clock,
+  Edit,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -21,12 +22,13 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
   const getStatusBadge = () => {
     switch (application.status) {
       case "PENDING":
+      case "DRAFT":
         return (
           <Badge
             variant="outline"
             className="bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800 rounded-md">
             <Clock className="h-3.5 w-3.5 mr-1" />
-            Pending
+            {application.status === "DRAFT" ? "Draft" : "Pending"}
           </Badge>
         );
       case "UNDER_REVIEW":
@@ -156,6 +158,15 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
           </Link>
         </Button>
 
+        {application.status === "DRAFT" && (
+          <Button asChild className="rounded-lg bg-blue-600 hover:bg-blue-700">
+            <Link href={`/apply/${application.id}`}>
+              <Edit className="h-4 w-4 mr-1" />
+              Complete Application
+            </Link>
+          </Button>
+        )}
+
         {application.status === "ACCEPTED" && (
           <Button
             asChild
@@ -166,7 +177,7 @@ export function ApplicationCard({ application }: ApplicationCardProps) {
           </Button>
         )}
 
-        {!application.payment && (
+        {!application.payment && application.status !== "DRAFT" && (
           <Button
             asChild
             className="rounded-lg bg-amber-600 hover:bg-amber-700">

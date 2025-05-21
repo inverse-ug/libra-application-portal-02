@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server";
-
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { auth } from "../../../../../auth";
@@ -37,7 +36,10 @@ export async function GET(
     }
 
     if (application.applicant.email !== session.user.email) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse(
+        "Unauthorized - You don't have permission to access this application",
+        { status: 401 }
+      );
     }
 
     // Create a new PDF document
@@ -89,7 +91,7 @@ export async function GET(
       body: [
         [
           "Full Name",
-          `${applicant.firstName} ${applicant.middleName || ""} ${applicant.surname}`,
+          `${applicant.firstName || ""} ${applicant.middleName || ""} ${applicant.surname || ""}`,
         ],
         [
           "Date of Birth",
@@ -105,7 +107,7 @@ export async function GET(
       ],
       theme: "grid",
       styles: { fontSize: 10, cellPadding: 3 },
-      columnStyles: { 0: { fontStyle: "bold", width: 40 } },
+      columnStyles: { 0: { fontStyle: "bold", cellWidth: 40 } },
     });
 
     // Program Information Section
@@ -126,12 +128,12 @@ export async function GET(
             ? `Short Course (${application.shortCourseDuration})`
             : application.program.type,
         ],
-        ["Duration", application.program.duration],
+        ["Duration", application.program.duration || "N/A"],
         ["Intake", application.intake ? application.intake.name : "N/A"],
       ],
       theme: "grid",
       styles: { fontSize: 10, cellPadding: 3 },
-      columnStyles: { 0: { fontStyle: "bold", width: 40 } },
+      columnStyles: { 0: { fontStyle: "bold", cellWidth: 40 } },
     });
 
     // Education History Section
@@ -143,15 +145,14 @@ export async function GET(
 
     if (applicant.educationHistory && applicant.educationHistory.length > 0) {
       const educationData = applicant.educationHistory.map((edu: any) => [
-        edu.institution,
+        edu.institutionName,
         edu.qualification,
-        `${new Date(edu.startDate).getFullYear()} - ${new Date(edu.endDate).getFullYear()}`,
-        edu.grade || "N/A",
+        `${edu.startYear} - ${edu.endYear || "Present"}`,
       ]);
 
       autoTable(doc, {
         startY: currentY2 + 5,
-        head: [["Institution", "Qualification", "Period", "Grade/Result"]],
+        head: [["Institution", "Qualification", "Period"]],
         body: educationData,
         theme: "grid",
         styles: { fontSize: 10, cellPadding: 3 },
@@ -182,7 +183,7 @@ export async function GET(
       ],
       theme: "grid",
       styles: { fontSize: 10, cellPadding: 3 },
-      columnStyles: { 0: { fontStyle: "bold", width: 40 } },
+      columnStyles: { 0: { fontStyle: "bold", cellWidth: 40 } },
     });
 
     // Next of Kin Information Section
@@ -203,7 +204,7 @@ export async function GET(
       ],
       theme: "grid",
       styles: { fontSize: 10, cellPadding: 3 },
-      columnStyles: { 0: { fontStyle: "bold", width: 40 } },
+      columnStyles: { 0: { fontStyle: "bold", cellWidth: 40 } },
     });
 
     // Declaration Section

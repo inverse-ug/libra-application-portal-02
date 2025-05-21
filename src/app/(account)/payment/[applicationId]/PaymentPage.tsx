@@ -17,8 +17,8 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
 import { processPayment } from "@/app/actions/payment-actions";
+import { toast } from "sonner";
 
 export default function PaymentPage({
   applicationId,
@@ -42,11 +42,9 @@ export default function PaymentPage({
       !phoneNumber &&
       (paymentMethod === "mtn" || paymentMethod === "airtel")
     ) {
-      toast({
-        title: "Phone number required",
+      toast.error("Phone number required", {
         description:
           "Please enter your phone number to proceed with mobile money payment",
-        variant: "destructive",
       });
       return;
     }
@@ -71,11 +69,21 @@ export default function PaymentPage({
         throw new Error(result.message);
       }
 
-      setPaymentDetails(result.data);
+      if (
+        result.data &&
+        result.data.paymentReference &&
+        result.data.paymentDate
+      ) {
+        setPaymentDetails({
+          paymentReference: result.data.paymentReference,
+          paymentDate: result.data.paymentDate,
+        });
+      } else {
+        setPaymentDetails(null);
+      }
       setIsComplete(true);
 
-      toast({
-        title: "Payment successful",
+      toast.success("Payment successful", {
         description: "Your application fee has been paid successfully",
       });
 
@@ -85,12 +93,10 @@ export default function PaymentPage({
       }, 3000);
     } catch (error: any) {
       console.error("Payment error:", error);
-      toast({
-        title: "Payment failed",
+      toast.error("Payment failed", {
         description:
           error.message ||
           "There was an error processing your payment. Please try again.",
-        variant: "destructive",
       });
     } finally {
       setIsProcessing(false);

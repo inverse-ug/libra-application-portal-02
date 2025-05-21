@@ -26,6 +26,7 @@ import {
   getAnnouncements,
 } from "@/app/actions/intake-actions";
 import { IntakeCard } from "@/components/intake-card";
+import { ShortCourseCTA } from "@/components/short-course-cta";
 
 export default function HomeContent({ userId }: { userId?: string }) {
   const [intakes, setIntakes] = useState<any[]>([]);
@@ -200,6 +201,11 @@ export default function HomeContent({ userId }: { userId?: string }) {
               )}
             </CardContent>
           </Card>
+
+          {/* Short Course CTA */}
+          <div className="mt-6">
+            <ShortCourseCTA />
+          </div>
         </div>
 
         <div className="lg:col-span-1">
