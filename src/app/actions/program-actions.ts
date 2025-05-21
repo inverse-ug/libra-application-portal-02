@@ -5,18 +5,19 @@ import { prisma } from "@/lib/prisma";
 /**
  * Get all programs
  */
-export async function getPrograms(options?: { intakeId?: string }) {
+export async function getPrograms(options?: {
+  intakeId?: string;
+  includeShortCourses?: boolean;
+}) {
   const where: any = {};
 
-  // If intakeId is provided, filter programs by intake
   if (options?.intakeId) {
     where.intakes = {
       some: {
         id: options.intakeId,
       },
     };
-  } else {
-    // Only filter by isShortCourse when not filtering by intake
+  } else if (options?.includeShortCourses === false) {
     where.isShortCourse = false;
   }
 
@@ -36,6 +37,8 @@ export async function getPrograms(options?: { intakeId?: string }) {
       title: "asc",
     },
   });
+
+  console.log(programs);
 
   return programs;
 }

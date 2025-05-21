@@ -15,21 +15,20 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { getIntakeById } from "@/app/actions/intake-actions";
 import { createOrUpdateApplication } from "@/app/actions/application-actions";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { formatCurrency } from "@/lib/utils";
-import { AlertCircle, ArrowRight } from "lucide-react";
+import { AlertCircle, ArrowRight, Clock, CreditCard } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { formatCurrency } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function ApplyPage({ id }: { id: string }) {
   const router = useRouter();
   const { user, isLoading: isUserLoading } = useUser();
-  const [intake, setIntake] = useState<any>(null);
-  const [programs, setPrograms] = useState<any[]>([]);
-  const [selectedProgram, setSelectedProgram] = useState<string>("");
+  const [intake, setIntake] = useState(null);
+  const [programs, setPrograms] = useState([]);
+  const [selectedProgram, setSelectedProgram] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,30 +88,21 @@ export default function ApplyPage({ id }: { id: string }) {
 
   if (isUserLoading || isLoading) {
     return (
-      <div className="p-4 md:p-6 max-w-4xl mx-auto">
-        <Card className="rounded-xl shadow-sm">
-          <CardHeader>
+      <div className="p-6 max-w-4xl mx-auto">
+        <Card className="rounded-xl shadow-md border-0">
+          <CardHeader className="pb-2">
             <Skeleton className="h-8 w-64 mb-2" />
             <Skeleton className="h-4 w-full max-w-md" />
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Skeleton className="h-6 w-48" />
-              <div className="space-y-2">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="flex items-start space-x-2">
-                    <Skeleton className="h-5 w-5 rounded-full" />
-                    <div className="space-y-1 flex-1">
-                      <Skeleton className="h-5 w-full max-w-md" />
-                      <Skeleton className="h-4 w-full max-w-sm" />
-                    </div>
-                  </div>
-                ))}
-              </div>
+          <CardContent className="pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} className="h-32 rounded-lg" />
+              ))}
             </div>
           </CardContent>
           <CardFooter>
-            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-40" />
           </CardFooter>
         </Card>
       </div>
@@ -121,7 +111,7 @@ export default function ApplyPage({ id }: { id: string }) {
 
   if (!intake) {
     return (
-      <div className="p-4 md:p-6 max-w-4xl mx-auto">
+      <div className="p-6 max-w-4xl mx-auto">
         <Alert variant="destructive" className="rounded-lg">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
@@ -134,70 +124,158 @@ export default function ApplyPage({ id }: { id: string }) {
     );
   }
 
+  // Group programs by type for better organization
+  const programsByType = programs.reduce((acc, program) => {
+    if (!acc[program.type]) {
+      acc[program.type] = [];
+    }
+    acc[program.type].push(program);
+    return acc;
+  }, {});
+
+  const programTypes = Object.keys(programsByType);
+  const defaultTabValue = programTypes.length > 0 ? programTypes[0] : "";
+
   return (
-    <div className="p-4 md:p-6 max-w-4xl mx-auto">
-      <Card className="rounded-xl shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-2xl">Apply for {intake.name}</CardTitle>
-          <CardDescription>
-            Please select the program you wish to apply for. The application fee
-            is {formatCurrency(intake.applicationFee)}.
+    <div className="p-6 max-w-4xl mx-auto">
+      <Card className="rounded-xl shadow-md border-0">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-2xl font-semibold">
+            Apply for {intake.name}
+          </CardTitle>
+          <CardDescription className="text-base mt-1">
+            Application fee:{" "}
+            <span className="font-medium">
+              {formatCurrency(intake.applicationFee)}
+            </span>
           </CardDescription>
         </CardHeader>
+
         <CardContent>
           {error && (
-            <Alert variant="destructive" className="mb-4 rounded-lg">
+            <Alert variant="destructive" className="mb-6 rounded-lg">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-medium mb-2">Select Program</h3>
-              <RadioGroup
-                value={selectedProgram}
-                onValueChange={setSelectedProgram}
-                className="space-y-3">
-                {programs.map((program) => (
-                  <div key={program.id} className="flex items-start space-x-2">
-                    <RadioGroupItem
-                      value={program.id}
-                      id={program.id}
-                      className="mt-1"
-                    />
-                    <div className="grid gap-1.5">
-                      <Label htmlFor={program.id} className="font-medium">
-                        {program.title} ({program.type})
-                      </Label>
-                      <p className="text-sm text-muted-foreground">
-                        {program.description}
-                      </p>
-                      {program.tuitionFee && (
-                        <p className="text-sm">
-                          <span className="font-medium">Tuition Fee:</span>{" "}
-                          {formatCurrency(program.tuitionFee)}
-                        </p>
-                      )}
-                      {program.duration && (
-                        <p className="text-sm">
-                          <span className="font-medium">Duration:</span>{" "}
-                          {program.duration}
-                        </p>
-                      )}
-                    </div>
-                  </div>
+          {programTypes.length > 1 ? (
+            <Tabs defaultValue={defaultTabValue} className="w-full">
+              <TabsList className="mb-6 w-full justify-start space-x-2 bg-transparent p-0">
+                {programTypes.map((type) => (
+                  <TabsTrigger
+                    key={type}
+                    value={type}
+                    className="rounded-md data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 border">
+                    {type}
+                  </TabsTrigger>
                 ))}
-              </RadioGroup>
+              </TabsList>
+
+              {programTypes.map((type) => (
+                <TabsContent key={type} value={type} className="mt-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {programsByType[type].map((program) => (
+                      <div
+                        key={program.id}
+                        className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
+                          selectedProgram === program.id
+                            ? "ring-2 ring-blue-500 bg-blue-50"
+                            : "hover:border-blue-200"
+                        }`}
+                        onClick={() => setSelectedProgram(program.id)}>
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-lg font-medium">
+                            {program.title}
+                          </h3>
+                          <div
+                            className={`w-4 h-4 rounded-full ${
+                              selectedProgram === program.id
+                                ? "bg-blue-500"
+                                : "border border-gray-300"
+                            }`}></div>
+                        </div>
+
+                        {program.description && (
+                          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                            {program.description}
+                          </p>
+                        )}
+
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          {program.tuitionFee && (
+                            <div className="flex items-center">
+                              <CreditCard className="h-3.5 w-3.5 mr-1.5 text-gray-500" />
+                              {formatCurrency(program.tuitionFee)}
+                            </div>
+                          )}
+                          {program.duration && (
+                            <div className="flex items-center">
+                              <Clock className="h-3.5 w-3.5 mr-1.5 text-gray-500" />
+                              {program.duration}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </TabsContent>
+              ))}
+            </Tabs>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {programs.map((program) => (
+                <div
+                  key={program.id}
+                  className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
+                    selectedProgram === program.id
+                      ? "ring-2 ring-blue-500 bg-blue-50"
+                      : "hover:border-blue-200"
+                  }`}
+                  onClick={() => setSelectedProgram(program.id)}>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-medium">{program.title}</h3>
+                    <div
+                      className={`w-4 h-4 rounded-full ${
+                        selectedProgram === program.id
+                          ? "bg-blue-500"
+                          : "border border-gray-300"
+                      }`}></div>
+                  </div>
+
+                  {program.description && (
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                      {program.description}
+                    </p>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    {program.tuitionFee && (
+                      <div className="flex items-center">
+                        <CreditCard className="h-3.5 w-3.5 mr-1.5 text-gray-500" />
+                        {formatCurrency(program.tuitionFee)}
+                      </div>
+                    )}
+                    {program.duration && (
+                      <div className="flex items-center">
+                        <Clock className="h-3.5 w-3.5 mr-1.5 text-gray-500" />
+                        {program.duration}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
+          )}
         </CardContent>
-        <CardFooter>
+
+        <CardFooter className="pt-4">
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || !selectedProgram}
-            className="rounded-lg bg-blue-600 hover:bg-blue-700">
+            className="rounded-lg bg-blue-600 hover:bg-blue-700 px-6"
+            size="lg">
             {isSubmitting ? "Processing..." : "Continue to Application"}
             {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4" />}
           </Button>
