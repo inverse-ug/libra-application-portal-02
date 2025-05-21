@@ -1,0 +1,296 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Applicant {
+  id              String     @id @default(cuid())
+  name            String     @default("")
+  email           String?    @unique
+  phone           String?    @unique
+  password        String
+  emailVerified   DateTime?
+  phoneVerified   DateTime?
+  lastLoginAt     DateTime?
+  loginAttempts   Int        @default(0)
+  role            String     @default("applicant")
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  passwordResetTokens PasswordResetToken[]
+  applications    Application[]
+  admissions      Admission[]
+  documents       Document[]
+  notifications   Notification[]
+
+  // Personal Information
+  firstName       String?
+  middleName      String?
+  surname         String?
+  dateOfBirth     DateTime?
+  gender          String?
+  nationality     String?
+  physicalAddress String?
+  
+  // Education Background
+  educationHistory EducationHistory[]
+  
+  // Next of Kin
+  nextOfKinName           String?
+  nextOfKinRelationship   String?
+  nextOfKinOccupation     String?
+  nextOfKinAddress        String?
+  nextOfKinPhone          String?
+  
+  // Sponsor Information
+  sponsorName             String?
+  sponsorRelationship     String?
+  sponsorOccupation       String?
+  sponsorAddress          String?
+  sponsorPhone            String?
+
+  @@index([email])
+  @@index([phone])
+}
+
+enum ApplicationStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  ACCEPTED
+  REJECTED
+  ENROLLED
+}
+
+enum ProgramType {
+  DIPLOMA
+  CERTIFICATE
+  SHORT_COURSE
+}
+
+model VerificationToken {
+  id          String   @id @default(cuid())
+  identifier  String
+  token       String   @unique
+  expires     DateTime
+  @@index([identifier])
+  @@unique([identifier, token])
+}
+
+model PasswordResetToken {
+  id          String   @id @default(cuid())
+  email       String
+  token       String   @unique
+  expires     DateTime
+  applicant   Applicant @relation(fields: [email], references: [email])
+  @@unique([email, token])
+}
+
+model Intake {
+  id               String      @id @default(cuid())
+  name             String
+  description      String?
+  applicationFee   Float
+  startDate        DateTime
+  endDate          DateTime
+  isActive         Boolean     @default(true)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  programs         Program[]   @relation("IntakeToProgram")
+  applications     Application[]
+  announcements    Announcement[]
+}
+
+model Program {
+  id               String      @id @default(cuid())
+  title            String
+  description      String?
+  type             ProgramType @default(DIPLOMA)
+  duration         String?     // e.g., "2 years", "6 months"
+  tuitionFee       Float?
+  requirements     String?
+  categories       Category[]  @relation("ProgramToCategory")
+  intakes          Intake[]    @relation("IntakeToProgram")
+  applications     Application[]
+  admissions       Admission[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  isShortCourse    Boolean     @default(false)
+}
+
+model Category {
+  id               String      @id @default(cuid())
+  name             String      @unique
+  description      String?
+  programs         Program[]   @relation("ProgramToCategory")
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model Application {
+  id               String      @id @default(cuid())
+  applicant        Applicant   @relation(fields: [applicantId], references: [id])
+  applicantId      String
+  program          Program     @relation(fields: [programId], references: [id])
+  programId        String
+  intake           Intake?     @relation(fields: [intakeId], references: [id])
+  intakeId         String?
+  status           ApplicationStatus @default(DRAFT)
+  payment          Payment?
+  documents        Document[]
+  notes            String?
+  reviewedBy       String?
+  reviewedAt       DateTime?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  admission        Admission?
+  
+  // Application Progress
+  completedSteps   String[]    // Array of completed step IDs
+  currentStep      String?     // Current step ID
+  progress         Int         @default(0) // Progress percentage (0-100)
+  
+  // Application Form Data
+  personalInfoComplete Boolean @default(false)
+  educationComplete    Boolean @default(false)
+  programInfoComplete  Boolean @default(false)
+  documentsComplete    Boolean @default(false)
+  declarationComplete  Boolean @default(false)
+  
+  // Declaration
+  declarationSigned Boolean @default(false)
+  declarationDate  DateTime?
+  
+  // For short courses
+  isShortCourse    Boolean     @default(false)
+  shortCourseDuration String?   // "3 months" or "6 months"
+}
+
+model EducationHistory {
+  id               String      @id @default(cuid())
+  applicant        Applicant   @relation(fields: [applicantId], references: [id])
+  applicantId      String
+  institutionName  String
+  startYear        Int
+  endYear          Int?
+  qualification    String      // PLE, UCE, UACE, CERTIFICATE, etc.
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model Payment {
+  id               String      @id @default(cuid())
+  application      Application @relation(fields: [applicationId], references: [id])
+  applicationId    String   @unique
+  amount           Float
+  method           PaymentMethod
+  status           PaymentStatus @default(PENDING)
+  transactionId    String?
+  receiptNumber    String?     @unique
+  paidAt           DateTime?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+enum PaymentMethod {
+  MTN
+  AIRTEL
+  BANK
+  CARD
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model Admission {
+  id               String      @id @default(cuid())
+  applicant        Applicant   @relation(fields: [applicantId], references: [id])
+  applicantId      String
+  program          Program     @relation(fields: [programId], references: [id])
+  programId        String
+  application      Application @relation(fields: [applicationId], references: [id])
+  applicationId    String      @unique
+  admissionNumber  String      @unique
+  status           AdmissionStatus @default(PROVISIONAL)
+  startDate        DateTime
+  endDate          DateTime?
+  documents        Document[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+enum AdmissionStatus {
+  PROVISIONAL
+  CONFIRMED
+  DEFERRED
+  WITHDRAWN
+  GRADUATED
+}
+
+model Document {
+  id               String      @id @default(cuid())
+  name             String
+  type             DocumentType
+  url              String
+  applicant        Applicant   @relation(fields: [applicantId], references: [id])
+  applicantId      String
+  application      Application? @relation(fields: [applicationId], references: [id])
+  applicationId    String?
+  admission        Admission?  @relation(fields: [admissionId], references: [id])
+  admissionId      String?
+  uploadedAt       DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+enum DocumentType {
+  NATIONAL_ID
+  PASSPORT_PHOTO
+  PLE_CERTIFICATE
+  UCE_CERTIFICATE
+  UACE_CERTIFICATE
+  OTHER_CERTIFICATE
+  ADMISSION_LETTER
+  OTHER
+}
+
+model Announcement {
+  id               String      @id @default(cuid())
+  title            String
+  content          String
+  intake           Intake?     @relation(fields: [intakeId], references: [id])
+  intakeId         String?
+  isPublished      Boolean     @default(true)
+  publishedAt      DateTime    @default(now())
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model Notification {
+  id               String      @id @default(cuid())
+  title            String
+  message          String
+  type             NotificationType
+  isRead           Boolean     @default(false)
+  applicant        Applicant   @relation(fields: [applicantId], references: [id])
+  applicantId      String
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+enum NotificationType {
+  APPLICATION_UPDATE
+  PAYMENT_CONFIRMATION
+  ADMISSION_UPDATE
+  GENERAL
+}
