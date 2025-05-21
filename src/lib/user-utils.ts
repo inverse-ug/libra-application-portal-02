@@ -3,7 +3,7 @@
 import { notFound } from "next/navigation";
 import { Session } from "next-auth";
 import { auth } from "../../auth";
-import prisma from "./prisma";
+import { prisma } from "./prisma";
 
 /**
  * Returns the current user's session data

@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { auth } from "../../../auth";
-import prisma from "../../lib/prisma";
-import { PaymentMethod, PaymentStatus } from "../generated/prisma";
+import { prisma } from "@/lib/prisma";
+import { PaymentMethod, PaymentStatus } from "@prisma/client";
 
 interface PaymentData {
   applicationId: string;
@@ -18,7 +18,7 @@ export async function processPayment(data: PaymentData) {
       return { success: false, message: "Unauthorized" };
     }
 
-    const { applicationId, paymentMethod, phoneNumber } = data;
+    const { applicationId, paymentMethod } = data;
 
     // Get application with applicant
     const application = await prisma.application.findUnique({

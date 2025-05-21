@@ -1,7 +1,7 @@
 "use server";
 
+import { prisma } from "@/lib/prisma";
 import { auth } from "../../../auth";
-import prisma from "../../lib/prisma";
 
 /**
  * Get user admissions

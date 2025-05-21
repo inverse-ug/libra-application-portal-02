@@ -2,9 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { auth } from "../../../auth";
-import prisma from "../../lib/prisma";
 import { put, del } from "@vercel/blob";
-import { DocumentType } from "../generated/prisma";
+import { DocumentType } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 /**
  * Upload a document to Vercel Blob and save to database

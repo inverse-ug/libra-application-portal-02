@@ -1,7 +1,7 @@
 "use server";
 
-import prisma from "../../lib/prisma";
-import { ProgramType } from "../generated/prisma";
+import { prisma } from "@/lib/prisma";
+import { ProgramType } from "@prisma/client";
 
 export async function seedDatabase() {
   try {
