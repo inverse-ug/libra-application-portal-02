@@ -1,351 +1,285 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/use-user";
-import {
-  getApplicationById,
-  updateApplicationStep,
-} from "@/app/actions/application-actions";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getIntakeById } from "@/app/actions/intake-actions";
+import { createOrUpdateApplication } from "@/app/actions/application-actions";
+import { AlertCircle, ArrowRight, Clock, CreditCard, Book } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, ArrowLeft, ArrowRight, Check } from "lucide-react";
-import { ApplicationStepBasics } from "@/components/application/step-basics";
-import { ApplicationStepPersonal } from "@/components/application/step-personal";
-import { ApplicationStepEducation } from "@/components/application/step-education";
-import { ApplicationStepSponsor } from "@/components/application/step-sponsor";
-import { ApplicationStepDocuments } from "@/components/application/step-documents";
-import { ApplicationStepReview } from "@/components/application/step-review";
-import { ApplicationStepDeclaration } from "@/components/application/step-declaration";
-import { ApplicationProgress } from "@/components/application/application-progress";
+import { formatCurrency } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Define application steps - Basics is the first step
-const STEPS = [
-  { id: "basics", label: "Basics" },
-  { id: "personal", label: "Personal Info" },
-  { id: "education", label: "Education" },
-  { id: "sponsor", label: "Sponsor & Next of Kin" },
-  { id: "documents", label: "Documents" },
-  { id: "review", label: "Review" },
-  { id: "declaration", label: "Declaration" },
-];
-
-export default function ApplicationPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function ApplyPage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { user, isLoading: isUserLoading } = useUser();
-  const [application, setApplication] = useState<any>(null);
+  const [intake, setIntake] = useState(null);
+  const [programs, setPrograms] = useState([]);
+  const [selectedProgram, setSelectedProgram] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [completedSteps, setCompletedSteps] = useState<string[]>([]);
-  const [isUpdating, setIsUpdating] = useState(false);
-
-  // Get preselected values from query params
-  const preselectedIntakeId = searchParams.get("intakeId") || undefined;
-  const preselectedProgramId = searchParams.get("programId") || undefined;
-  const preselectedCourseType = searchParams.get("courseType") as
-    | "long"
-    | "short"
-    | undefined;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchApplication = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
-        const data = await getApplicationById(params.id);
-        setApplication(data);
+        const intakeData = await getIntakeById(params.id);
+        setIntake(intakeData);
 
-        // Set current step and completed steps from application data
-        if (data) {
-          // Find the current step index, default to 0 (basics) if not found
-          const stepIndex = data.currentStep
-            ? STEPS.findIndex((step) => step.id === data.currentStep)
-            : 0;
-          setCurrentStepIndex(stepIndex >= 0 ? stepIndex : 0);
-
-          // Set completed steps
-          setCompletedSteps(data.completedSteps || []);
+        if (intakeData?.programs && intakeData.programs.length > 0) {
+          setPrograms(intakeData.programs);
+          setSelectedProgram(intakeData.programs[0].id);
         }
       } catch (error) {
-        console.error("Error fetching application:", error);
-        setError("Failed to load application. Please try again later.");
+        console.error("Error fetching data:", error);
+        setError("Failed to load intake information. Please try again later.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (params.id) {
-      fetchApplication();
-    }
+    fetchData();
   }, [params.id]);
 
-  const currentStep = STEPS[currentStepIndex];
-
-  const handleNext = async () => {
-    if (currentStepIndex < STEPS.length - 1) {
-      try {
-        setIsUpdating(true);
-
-        // Add current step to completed steps if not already included
-        const updatedCompletedSteps = [...completedSteps];
-        if (!updatedCompletedSteps.includes(currentStep.id)) {
-          updatedCompletedSteps.push(currentStep.id);
-        }
-
-        // Calculate progress percentage
-        const progress = Math.round(
-          (updatedCompletedSteps.length / STEPS.length) * 100
-        );
-
-        // Update application in database
-        await updateApplicationStep(params.id, {
-          currentStep: STEPS[currentStepIndex + 1].id,
-          completedSteps: updatedCompletedSteps,
-          progress,
-        });
-
-        // Update local state
-        setCompletedSteps(updatedCompletedSteps);
-        setCurrentStepIndex(currentStepIndex + 1);
-      } catch (error) {
-        console.error("Error updating application step:", error);
-        setError("Failed to save progress. Please try again.");
-      } finally {
-        setIsUpdating(false);
-      }
+  const handleSubmit = async () => {
+    if (!user?.id || !selectedProgram) {
+      setError("Please select a program to continue.");
+      return;
     }
-  };
 
-  const handleBack = async () => {
-    if (currentStepIndex > 0) {
-      try {
-        setIsUpdating(true);
-
-        // Update application in database
-        await updateApplicationStep(params.id, {
-          currentStep: STEPS[currentStepIndex - 1].id,
-          completedSteps,
-          progress: Math.round((completedSteps.length / STEPS.length) * 100),
-        });
-
-        // Update local state
-        setCurrentStepIndex(currentStepIndex - 1);
-      } catch (error) {
-        console.error("Error updating application step:", error);
-        setError("Failed to navigate back. Please try again.");
-      } finally {
-        setIsUpdating(false);
-      }
-    }
-  };
-
-  const goToStep = async (stepIndex: number) => {
-    if (stepIndex >= 0 && stepIndex < STEPS.length) {
-      // Only allow navigation to completed steps or the current step + 1
-      if (
-        completedSteps.includes(STEPS[stepIndex].id) ||
-        stepIndex === currentStepIndex ||
-        stepIndex === currentStepIndex + 1
-      ) {
-        try {
-          setIsUpdating(true);
-
-          // Update application in database
-          await updateApplicationStep(params.id, {
-            currentStep: STEPS[stepIndex].id,
-            completedSteps,
-            progress: Math.round((completedSteps.length / STEPS.length) * 100),
-          });
-
-          // Update local state
-          setCurrentStepIndex(stepIndex);
-        } catch (error) {
-          console.error("Error navigating to step:", error);
-          setError(
-            "Failed to navigate to the selected step. Please try again."
-          );
-        } finally {
-          setIsUpdating(false);
-        }
-      }
-    }
-  };
-
-  // Refresh application data after step completion
-  const handleStepComplete = async () => {
     try {
-      const updatedApplication = await getApplicationById(params.id);
-      setApplication(updatedApplication);
-      handleNext();
+      setIsSubmitting(true);
+      setError(null);
+
+      const application = await createOrUpdateApplication(
+        user.id,
+        selectedProgram,
+        {
+          intakeId: params.id,
+          isShortCourse: false,
+        }
+      );
+
+      if (application) {
+        router.push(`/apply/${application.id}`);
+      } else {
+        setError("Failed to create application. Please try again.");
+      }
     } catch (error) {
-      console.error("Error refreshing application data:", error);
-      handleNext();
+      console.error("Error creating application:", error);
+      setError(
+        "An error occurred while creating your application. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   if (isUserLoading || isLoading) {
     return (
-      <div className="p-4 md:p-6 max-w-5xl mx-auto">
-        <Card className="p-6 rounded-xl shadow-sm">
-          <div className="space-y-6">
-            <Skeleton className="h-8 w-64" />
-            <div className="flex justify-between">
-              {[...Array(8)].map((_, i) => (
-                <Skeleton key={i} className="h-2 w-10" />
+      <div className="p-6 max-w-4xl mx-auto">
+        <Card className="rounded-xl shadow-md border-0">
+          <CardHeader className="pb-2">
+            <Skeleton className="h-8 w-64 mb-2" />
+            <Skeleton className="h-4 w-full max-w-md" />
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} className="h-32 rounded-lg" />
               ))}
             </div>
-            <Skeleton className="h-4 w-full" />
-            <div className="space-y-4">
-              {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} className="h-12 w-full" />
-              ))}
-            </div>
-            <div className="flex justify-between">
-              <Skeleton className="h-10 w-24" />
-              <Skeleton className="h-10 w-24" />
-            </div>
-          </div>
+          </CardContent>
+          <CardFooter>
+            <Skeleton className="h-10 w-40" />
+          </CardFooter>
         </Card>
       </div>
     );
   }
 
-  if (!application) {
+  if (!intake) {
     return (
-      <div className="p-4 md:p-6 max-w-5xl mx-auto">
+      <div className="p-6 max-w-4xl mx-auto">
         <Alert variant="destructive" className="rounded-lg">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>
-            The application you are looking for does not exist or has been
-            removed. Please go back and try again.
+            The intake you are looking for does not exist or has been removed.
+            Please go back and try again.
           </AlertDescription>
         </Alert>
       </div>
     );
   }
 
+  // Group programs by type for better organization
+  const programsByType = programs.reduce((acc, program) => {
+    if (!acc[program.type]) {
+      acc[program.type] = [];
+    }
+    acc[program.type].push(program);
+    return acc;
+  }, {});
+
+  const programTypes = Object.keys(programsByType);
+  const defaultTabValue = programTypes.length > 0 ? programTypes[0] : "";
+
   return (
-    <div className="p-4 md:p-6 max-w-5xl mx-auto">
-      <Card className="p-6 rounded-xl shadow-sm">
-        {error && (
-          <Alert variant="destructive" className="mb-6 rounded-lg">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+    <div className="p-6 max-w-4xl mx-auto">
+      <Card className="rounded-xl shadow-md border-0">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-2xl font-semibold">
+            Apply for {intake.name}
+          </CardTitle>
+          <CardDescription className="text-base mt-1">
+            Application fee:{" "}
+            <span className="font-medium">
+              {formatCurrency(intake.applicationFee)}
+            </span>
+          </CardDescription>
+        </CardHeader>
 
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold mb-6">
-            Application for {application.program?.title}
-            {application.isShortCourse
-              ? ` (Short Course - ${application.shortCourseDuration})`
-              : application.intake
-                ? ` - ${application.intake?.name}`
-                : ""}
-          </h1>
-
-          <ApplicationProgress
-            steps={STEPS}
-            currentStepIndex={currentStepIndex}
-            completedSteps={completedSteps}
-            onStepClick={goToStep}
-          />
-        </div>
-
-        <div className="mb-8">
-          {currentStep.id === "basics" && (
-            <ApplicationStepBasics
-              application={application}
-              onComplete={handleStepComplete}
-              preselectedIntakeId={preselectedIntakeId}
-              preselectedProgramId={preselectedProgramId}
-              preselectedCourseType={preselectedCourseType}
-            />
+        <CardContent>
+          {error && (
+            <Alert variant="destructive" className="mb-6 rounded-lg">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
 
-          {currentStep.id === "personal" && (
-            <ApplicationStepPersonal
-              application={application}
-              user={user}
-              onComplete={handleStepComplete}
-            />
-          )}
+          {programTypes.length > 1 ? (
+            <Tabs defaultValue={defaultTabValue} className="w-full">
+              <TabsList className="mb-6 w-full justify-start space-x-2 bg-transparent p-0">
+                {programTypes.map((type) => (
+                  <TabsTrigger
+                    key={type}
+                    value={type}
+                    className="rounded-md data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 border">
+                    {type}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
 
-          {currentStep.id === "education" && (
-            <ApplicationStepEducation
-              application={application}
-              user={user}
-              onComplete={handleStepComplete}
-            />
-          )}
+              {programTypes.map((type) => (
+                <TabsContent key={type} value={type} className="mt-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {programsByType[type].map((program) => (
+                      <div
+                        key={program.id}
+                        className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
+                          selectedProgram === program.id
+                            ? "ring-2 ring-blue-500 bg-blue-50"
+                            : "hover:border-blue-200"
+                        }`}
+                        onClick={() => setSelectedProgram(program.id)}>
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-lg font-medium">
+                            {program.title}
+                          </h3>
+                          <div
+                            className={`w-4 h-4 rounded-full ${
+                              selectedProgram === program.id
+                                ? "bg-blue-500"
+                                : "border border-gray-300"
+                            }`}></div>
+                        </div>
 
-          {currentStep.id === "sponsor" && (
-            <ApplicationStepSponsor
-              application={application}
-              user={user}
-              onComplete={handleStepComplete}
-            />
-          )}
+                        {program.description && (
+                          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                            {program.description}
+                          </p>
+                        )}
 
-          {currentStep.id === "documents" && (
-            <ApplicationStepDocuments
-              application={application}
-              user={user}
-              onComplete={handleStepComplete}
-            />
-          )}
-
-          {currentStep.id === "review" && (
-            <ApplicationStepReview
-              application={application}
-              onComplete={handleStepComplete}
-            />
-          )}
-
-          {currentStep.id === "declaration" && (
-            <ApplicationStepDeclaration
-              application={application}
-              onComplete={handleStepComplete}
-            />
-          )}
-        </div>
-
-        <div className="flex justify-between">
-          <Button
-            variant="outline"
-            onClick={handleBack}
-            disabled={currentStepIndex === 0 || isUpdating}
-            className="rounded-lg">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-
-          {currentStep.id !== "declaration" ? (
-            <Button
-              onClick={handleNext}
-              disabled={isUpdating || !completedSteps.includes(currentStep.id)}
-              className="rounded-lg bg-blue-600 hover:bg-blue-700">
-              Next
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
+                          {program.tuitionFee && (
+                            <div className="flex items-center">
+                              <CreditCard className="h-3.5 w-3.5 mr-1.5 text-gray-500" />
+                              {formatCurrency(program.tuitionFee)}
+                            </div>
+                          )}
+                          {program.duration && (
+                            <div className="flex items-center">
+                              <Clock className="h-3.5 w-3.5 mr-1.5 text-gray-500" />
+                              {program.duration}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </TabsContent>
+              ))}
+            </Tabs>
           ) : (
-            <Button
-              onClick={() => router.push(`/my-applications/${application.id}`)}
-              className="rounded-lg bg-emerald-600 hover:bg-emerald-700">
-              <Check className="mr-2 h-4 w-4" />
-              View Application
-            </Button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {programs.map((program) => (
+                <div
+                  key={program.id}
+                  className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
+                    selectedProgram === program.id
+                      ? "ring-2 ring-blue-500 bg-blue-50"
+                      : "hover:border-blue-200"
+                  }`}
+                  onClick={() => setSelectedProgram(program.id)}>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-lg font-medium">{program.title}</h3>
+                    <div
+                      className={`w-4 h-4 rounded-full ${
+                        selectedProgram === program.id
+                          ? "bg-blue-500"
+                          : "border border-gray-300"
+                      }`}></div>
+                  </div>
+
+                  {program.description && (
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                      {program.description}
+                    </p>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    {program.tuitionFee && (
+                      <div className="flex items-center">
+                        <CreditCard className="h-3.5 w-3.5 mr-1.5 text-gray-500" />
+                        {formatCurrency(program.tuitionFee)}
+                      </div>
+                    )}
+                    {program.duration && (
+                      <div className="flex items-center">
+                        <Clock className="h-3.5 w-3.5 mr-1.5 text-gray-500" />
+                        {program.duration}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
-        </div>
+        </CardContent>
+
+        <CardFooter className="pt-4">
+          <Button
+            onClick={handleSubmit}
+            disabled={isSubmitting || !selectedProgram}
+            className="rounded-lg bg-blue-600 hover:bg-blue-700 px-6"
+            size="lg">
+            {isSubmitting ? "Processing..." : "Continue to Application"}
+            {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4" />}
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   );

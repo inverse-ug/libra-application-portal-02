@@ -10,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { uploadDocument } from "@/app/actions/application-actions";
 import {
   Loader2,
   Upload,
@@ -23,7 +22,10 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { deleteDocument } from "@/app/actions/document-actions";
+import {
+  uploadDocumentWithBlob,
+  deleteDocument,
+} from "@/app/actions/document-actions";
 import {
   Dialog,
   DialogContent,
@@ -101,31 +103,16 @@ export function ApplicationStepDocuments({
       setUploadStatus((prev) => ({ ...prev, [docType]: "uploading" }));
       setUploadProgress((prev) => ({ ...prev, [docType]: 0 }));
 
-      // Validate file size (max 5MB)
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (file.size > maxSize) {
-        throw new Error("File size exceeds the maximum limit of 5MB");
-      }
-
-      // Validate file type
-      const allowedTypes = [
-        "application/pdf",
-        "image/jpeg",
-        "image/png",
-        "image/jpg",
-      ];
-      if (!allowedTypes.includes(file.type)) {
-        throw new Error(
-          "Invalid file type. Only PDF, JPEG, and PNG files are allowed"
-        );
-      }
-
-      // Create form data for upload
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("applicationId", application.id);
-      formData.append("userId", user.id);
-      formData.append("documentType", docType);
+      // Log user and application info for debugging
+      console.log("User info:", {
+        id: user?.id,
+        name: user?.name,
+        email: user?.email,
+      });
+      console.log("Application info:", {
+        id: application?.id,
+        status: application?.status,
+      });
 
       // Start progress animation
       const progressInterval = setInterval(() => {
@@ -139,32 +126,30 @@ export function ApplicationStepDocuments({
         });
       }, 300);
 
-      // Upload file to API route
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+      // Create form data for upload
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("applicationId", application.id);
+      formData.append("userId", user.id);
+      formData.append("documentType", docType);
+      formData.append("documentName", docName);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to upload file");
-      }
-
-      const data = await response.json();
-
-      // Save document to database
-      const result = await uploadDocument(application.id, user.id, {
-        name: docName,
-        type: docType,
-        url: data.url,
-      });
+      // Upload file using server action
+      console.log("Calling uploadDocumentWithBlob with form data");
+      const result = await uploadDocumentWithBlob(formData);
+      console.log("Upload result:", result);
 
       clearInterval(progressInterval);
+
+      if (!result.success) {
+        throw new Error(result.message || "Upload failed");
+      }
+
       setUploadProgress((prev) => ({ ...prev, [docType]: 100 }));
       setUploadStatus((prev) => ({ ...prev, [docType]: "success" }));
 
       // Update existing documents
-      if (result && result.success && result.document) {
+      if (result.document) {
         setExistingDocuments((prev) => [...prev, result.document]);
       }
 
