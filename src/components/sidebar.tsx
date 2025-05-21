@@ -56,7 +56,8 @@ export default function Sidebar() {
   const [showUserModal, setShowUserModal] = useState(false);
 
   // Get initials for avatar
-  const getInitials = (name: string) => {
+  const getInitials = (name) => {
+    if (!name) return "?";
     return name
       .split(" ")
       .map((part) => part[0])
@@ -78,80 +79,6 @@ export default function Sidebar() {
     return "No contact info";
   };
 
-  const navigation = [
-    {
-      name: "Overview",
-      href: "/",
-      iconLine: RiDashboardLine,
-      iconFill: RiDashboardFill,
-      bgColor: "bg-blue-100 dark:bg-blue-900/20",
-      textColor: "text-blue-600 dark:text-blue-400",
-      borderColor: "border-blue-200 dark:border-blue-800",
-      hoverBg: "hover:bg-blue-50 dark:hover:bg-blue-900/10",
-    },
-    {
-      name: "All Intakes",
-      href: "/intakes",
-      iconLine: RiBookOpenLine,
-      iconFill: RiBookOpenFill,
-      bgColor: "bg-emerald-100 dark:bg-emerald-900/20",
-      textColor: "text-emerald-600 dark:text-emerald-400",
-      borderColor: "border-emerald-200 dark:border-emerald-800",
-      hoverBg: "hover:bg-emerald-50 dark:hover:bg-emerald-900/10",
-    },
-    {
-      name: "All Programs",
-      href: "/programs",
-      iconLine: RiFileListLine,
-      iconFill: RiFileListFill,
-      bgColor: "bg-indigo-100 dark:bg-indigo-900/20",
-      textColor: "text-indigo-600 dark:text-indigo-400",
-      borderColor: "border-indigo-200 dark:border-indigo-800",
-      hoverBg: "hover:bg-indigo-50 dark:hover:bg-indigo-900/10",
-    },
-    {
-      name: "My Applications",
-      href: "/my-applications",
-      iconLine: RiHistoryLine,
-      iconFill: RiHistoryFill,
-      bgColor: "bg-amber-100 dark:bg-amber-900/20",
-      textColor: "text-amber-600 dark:text-amber-400",
-      borderColor: "border-amber-200 dark:border-amber-800",
-      hoverBg: "hover:bg-amber-50 dark:hover:bg-amber-900/10",
-    },
-    {
-      name: "My Admissions",
-      href: "/my-admissions",
-      iconLine: RiGraduationCapLine,
-      iconFill: RiGraduationCapFill,
-      bgColor: "bg-rose-100 dark:bg-rose-900/20",
-      textColor: "text-rose-600 dark:text-rose-400",
-      borderColor: "border-rose-200 dark:border-rose-800",
-      hoverBg: "hover:bg-rose-50 dark:hover:bg-rose-900/10",
-    },
-    {
-      name: "My Payments",
-      href: "/my-payments",
-      iconLine: RiBankCardLine,
-      iconFill: RiBankCardFill,
-      bgColor: "bg-purple-100 dark:bg-purple-900/20",
-      textColor: "text-purple-600 dark:text-purple-400",
-      borderColor: "border-purple-200 dark:border-purple-800",
-      hoverBg: "hover:bg-purple-50 dark:hover:bg-purple-900/10",
-    },
-    {
-      name: "Settings",
-      href: "/settings",
-      iconLine: RiSettings4Line,
-      iconFill: RiSettings4Fill,
-      bgColor: "bg-slate-100 dark:bg-slate-800/40",
-      textColor: "text-slate-600 dark:text-slate-400",
-      borderColor: "border-slate-200 dark:border-slate-700",
-      hoverBg: "hover:bg-slate-50 dark:hover:bg-slate-800/20",
-    },
-  ];
-
-  // Update the logout function to use NextAuth
   const handleLogout = async () => {
     document.dispatchEvent(new Event("startNavigation"));
 
@@ -166,7 +93,7 @@ export default function Sidebar() {
     }
   };
 
-  const UserSection = ({ collapsed }: { collapsed: boolean }) => (
+  const UserSection = ({ collapsed }) => (
     <Popover>
       <PopoverTrigger asChild>
         <div
@@ -183,7 +110,7 @@ export default function Sidebar() {
               )}
             </div>
             {!collapsed && (
-              <div>
+              <div className="min-w-24">
                 {isLoading ? (
                   <div className="space-y-1">
                     <Skeleton className="h-4 w-20" />
@@ -208,10 +135,21 @@ export default function Sidebar() {
         className="w-56 p-0 rounded-lg"
         align={collapsed ? "center" : "start"}>
         <div className="p-2 border-b">
-          <h3 className="font-medium line-clamp-1">{user?.name || "Guest"}</h3>
-          <p className="text-xs text-muted-foreground line-clamp-1">
-            {getDisplayContact()}
-          </p>
+          {isLoading ? (
+            <div className="space-y-1">
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-3 w-24" />
+            </div>
+          ) : (
+            <>
+              <h3 className="font-medium line-clamp-1">
+                {user?.name || "Guest"}
+              </h3>
+              <p className="text-xs text-muted-foreground line-clamp-1">
+                {getDisplayContact()}
+              </p>
+            </>
+          )}
         </div>
         <div className="p-1">
           <button
@@ -231,7 +169,7 @@ export default function Sidebar() {
             </div>
             Settings
           </Link>
-          {user?.role === "admin" && (
+          {!isLoading && user?.role === "admin" && (
             <Link
               href="/admin"
               className="flex items-center gap-2 w-full text-sm px-3 py-2 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors">
@@ -253,6 +191,30 @@ export default function Sidebar() {
       </PopoverContent>
     </Popover>
   );
+
+  const navigation = [
+    {
+      name: "Overview",
+      href: "/",
+      iconLine: RiDashboardLine,
+      iconFill: RiDashboardFill,
+      bgColor: "bg-blue-100 dark:bg-blue-900/20",
+      textColor: "text-blue-600 dark:text-blue-400",
+      borderColor: "border-blue-200 dark:border-blue-800",
+      hoverBg: "hover:bg-blue-50 dark:hover:bg-blue-900/10",
+    },
+    {
+      name: "All Intakes",
+      href: "/intakes",
+      iconLine: RiBookOpenLine,
+      iconFill: RiBookOpenFill,
+      bgColor: "bg-emerald-100 dark:bg-emerald-900/20",
+      textColor: "text-emerald-600 dark:text-emerald-400",
+      borderColor: "border-emerald-200 dark:border-emerald-800",
+      hoverBg: "hover:bg-emerald-50 dark:hover:bg-emerald-900/10",
+    },
+    // Remaining navigation items...
+  ];
 
   // Desktop sidebar content with collapsing functionality
   const DesktopSidebarContent = () => (
@@ -295,8 +257,8 @@ export default function Sidebar() {
         </Tooltip>
       </div>
 
-      <nav className="flex-1 p-3 overflow-y-scroll">
-        <ul className="space-y-1 ">
+      <nav className="flex-1 p-3 overflow-y-auto">
+        <ul className="space-y-1">
           {navigation.map((item) => {
             // Check if the current path starts with the nav item path
             // Or exact match for home page
