@@ -10,7 +10,7 @@ import {
   sendPasswordResetEmail,
   hashPassword,
 } from "@/lib/auth-utils";
-import { signIn } from "../../../auth";
+import { signIn } from "../../auth";
 import { AuthError } from "next-auth";
 import { prisma } from "@/lib/prisma";
 

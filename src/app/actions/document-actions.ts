@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { auth } from "../../../auth";
+import { auth } from "../../auth";
 import { put, del } from "@vercel/blob";
 import { DocumentType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";

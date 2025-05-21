@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation";
 import { Session } from "next-auth";
-import { auth } from "../../auth";
+import { auth } from "../auth";
 import { prisma } from "./prisma";
 
 /**
