@@ -113,6 +113,7 @@ export async function createOrUpdateApplication(
       status: "DRAFT",
       progress: 0,
       completedSteps: [],
+      currentStep: "basics", // Set the first step as "basics"
     },
   });
 
@@ -123,6 +124,38 @@ export async function createOrUpdateApplication(
   revalidatePath(`/my-applications`);
 
   return newApplication;
+}
+
+/**
+ * Update application basics
+ */
+export async function updateApplicationBasics(
+  applicationId: string,
+  data: {
+    isShortCourse: boolean;
+    intakeId: string | null;
+    programId: string;
+    shortCourseDuration: string | null;
+  }
+) {
+  const application = await prisma.application.update({
+    where: { id: applicationId },
+    data: {
+      isShortCourse: data.isShortCourse,
+      intakeId: data.intakeId,
+      programId: data.programId,
+      shortCourseDuration: data.shortCourseDuration,
+      basicsComplete: true,
+    },
+    include: {
+      program: true,
+      intake: true,
+    },
+  });
+
+  revalidatePath(`/apply/${applicationId}`);
+
+  return application;
 }
 
 /**
@@ -148,6 +181,63 @@ export async function updateApplicationStep(
   revalidatePath(`/my-applications`);
 
   return application;
+}
+
+// Add a new function to update the work experience information
+export async function updateWorkExperience(
+  applicationId: string,
+  userId: string,
+  data: {
+    hasWorkExperience: boolean;
+    workExperiences: {
+      company: string;
+      position: string;
+      startDate: Date;
+      endDate?: Date | null;
+      description: string;
+    }[];
+  }
+) {
+  try {
+    // First delete existing work experiences for this application
+    await prisma.workExperience.deleteMany({
+      where: {
+        applicationId: applicationId,
+      },
+    });
+
+    // Add new work experience records if the applicant has work experience
+    if (data.hasWorkExperience && data.workExperiences.length > 0) {
+      for (const experience of data.workExperiences) {
+        await prisma.workExperience.create({
+          data: {
+            applicationId: applicationId,
+            applicantId: userId,
+            company: experience.company,
+            position: experience.position,
+            startDate: experience.startDate,
+            endDate: experience.endDate,
+            description: experience.description,
+          },
+        });
+      }
+    }
+
+    // Update application progress
+    const application = await prisma.application.update({
+      where: { id: applicationId },
+      data: {
+        workExperienceComplete: true,
+      },
+    });
+
+    revalidatePath(`/apply/${applicationId}`);
+
+    return application;
+  } catch (error) {
+    console.error("Error updating work experience:", error);
+    throw error;
+  }
 }
 
 /**

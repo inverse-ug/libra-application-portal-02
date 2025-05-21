@@ -1,27 +1,34 @@
 "use server";
-
 import prisma from "../../../lib/prisma";
 
 /**
- * Get all programs with optional filtering
+ * Get all programs
  */
-export async function getPrograms({
-  categoryId,
-}: { categoryId?: string } = {}) {
-  const query: any = {};
+export async function getPrograms(options?: { intakeId?: string }) {
+  const where: any = {
+    isShortCourse: false,
+  };
 
-  if (categoryId) {
-    query.categories = {
+  // If intakeId is provided, filter programs by intake
+  if (options?.intakeId) {
+    where.intakes = {
       some: {
-        id: categoryId,
+        id: options.intakeId,
       },
     };
   }
 
   const programs = await prisma.program.findMany({
-    where: query,
+    where,
     include: {
       categories: true,
+      intakes: {
+        where: {
+          endDate: {
+            gte: new Date(),
+          },
+        },
+      },
     },
     orderBy: {
       title: "asc",
@@ -29,41 +36,6 @@ export async function getPrograms({
   });
 
   return programs;
-}
-
-/**
- * Get a single program by ID
- */
-export async function getProgramById(id: string) {
-  const program = await prisma.program.findUnique({
-    where: { id },
-    include: {
-      categories: true,
-      intakes: {
-        where: {
-          isActive: true,
-        },
-        orderBy: {
-          startDate: "asc",
-        },
-      },
-    },
-  });
-
-  return program;
-}
-
-/**
- * Get all categories
- */
-export async function getCategories() {
-  const categories = await prisma.category.findMany({
-    orderBy: {
-      name: "asc",
-    },
-  });
-
-  return categories;
 }
 
 /**
@@ -83,6 +55,55 @@ export async function getShortCourses() {
   });
 
   return shortCourses;
+}
+
+/**
+ * Get all intakes
+ */
+export async function getIntakes(options?: {
+  limit?: number;
+  isActive?: boolean;
+}) {
+  const where: any = {};
+
+  if (options?.isActive) {
+    where.isActive = true;
+    where.endDate = {
+      gte: new Date(),
+    };
+  }
+
+  const intakes = await prisma.intake.findMany({
+    where,
+    take: options?.limit,
+    orderBy: {
+      startDate: "asc",
+    },
+  });
+
+  return intakes;
+}
+
+/**
+ * Get program by ID
+ */
+export async function getProgramById(id: string) {
+  const program = await prisma.program.findUnique({
+    where: { id },
+    include: {
+      categories: true,
+      intakes: {
+        where: {
+          isActive: true,
+          endDate: {
+            gte: new Date(),
+          },
+        },
+      },
+    },
+  });
+
+  return program;
 }
 
 /**

@@ -29,6 +29,7 @@ model Applicant {
   admissions      Admission[]
   documents       Document[]
   notifications   Notification[]
+  workExperiences WorkExperience[]
 
   // Personal Information
   firstName       String?
@@ -145,6 +146,7 @@ model Application {
   status           ApplicationStatus @default(DRAFT)
   payment          Payment?
   documents        Document[]
+  workExperiences  WorkExperience[]
   notes            String?
   reviewedBy       String?
   reviewedAt       DateTime?
@@ -158,8 +160,10 @@ model Application {
   progress         Int         @default(0) // Progress percentage (0-100)
   
   // Application Form Data
+  basicsComplete       Boolean @default(false) // Added this field
   personalInfoComplete Boolean @default(false)
   educationComplete    Boolean @default(false)
+  workExperienceComplete Boolean @default(false)
   programInfoComplete  Boolean @default(false)
   documentsComplete    Boolean @default(false)
   declarationComplete  Boolean @default(false)
@@ -171,6 +175,24 @@ model Application {
   // For short courses
   isShortCourse    Boolean     @default(false)
   shortCourseDuration String?   // "3 months" or "6 months"
+}
+
+model WorkExperience {
+  id               String      @id @default(cuid())
+  application      Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  applicationId    String
+  applicant        Applicant   @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  applicantId      String
+  company          String
+  position         String
+  startDate        DateTime
+  endDate          DateTime?
+  description      String
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([applicationId])
+  @@index([applicantId])
 }
 
 model EducationHistory {

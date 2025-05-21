@@ -1,18 +1,12 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-interface Step {
-  id: string;
-  label: string;
-}
 
 interface ApplicationProgressProps {
-  steps: Step[];
+  steps: { id: string; label: string }[];
   currentStepIndex: number;
   completedSteps: string[];
-  onStepClick?: (index: number) => void;
+  onStepClick: (index: number) => void;
 }
 
 export function ApplicationProgress({
@@ -22,48 +16,60 @@ export function ApplicationProgress({
   onStepClick,
 }: ApplicationProgressProps) {
   return (
-    <div className="flex flex-wrap justify-between">
-      {steps.map((step, index) => {
-        const isCompleted = completedSteps.includes(step.id);
-        const isCurrent = index === currentStepIndex;
-        const isClickable =
-          isCompleted ||
-          index === currentStepIndex ||
-          index === currentStepIndex + 1;
+    <div className="relative">
+      <div className="flex justify-between mb-2">
+        {steps.map((step, index) => {
+          const isCompleted = completedSteps.includes(step.id);
+          const isCurrent = index === currentStepIndex;
+          const isClickable =
+            isCompleted ||
+            index === currentStepIndex ||
+            index === currentStepIndex + 1;
 
-        return (
-          <div
-            key={step.id}
-            className={cn(
-              "flex flex-col items-center mb-4",
-              isClickable ? "cursor-pointer" : "cursor-not-allowed opacity-50"
-            )}
-            onClick={() => isClickable && onStepClick?.(index)}>
-            <div
-              className={cn(
-                "flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all",
-                isCompleted
-                  ? "bg-blue-600 border-blue-600 text-white"
-                  : isCurrent
-                    ? "border-blue-600 text-blue-600"
-                    : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
-              )}>
-              {isCompleted ? (
-                <Check className="h-5 w-5" />
-              ) : (
-                <span className="text-sm font-medium">{index + 1}</span>
-              )}
-            </div>
-            <span
-              className={cn(
-                "mt-2 text-xs font-medium text-center max-w-[80px]",
-                isCurrent ? "text-blue-600" : "text-muted-foreground"
-              )}>
-              {step.label}
-            </span>
-          </div>
-        );
-      })}
+          return (
+            <button
+              key={step.id}
+              className={`flex flex-col items-center relative z-10 ${isClickable ? "cursor-pointer" : "cursor-not-allowed opacity-50"}`}
+              onClick={() => isClickable && onStepClick(index)}
+              disabled={!isClickable}>
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 transition-colors ${
+                  isCompleted
+                    ? "bg-blue-600 text-white"
+                    : isCurrent
+                      ? "bg-blue-100 border-2 border-blue-600 text-blue-600 dark:bg-blue-900/30"
+                      : "bg-gray-200 text-gray-500 dark:bg-gray-800"
+                }`}>
+                {isCompleted ? <Check className="h-4 w-4" /> : index + 1}
+              </div>
+              <span
+                className={`text-xs text-center ${
+                  isCurrent
+                    ? "font-medium text-blue-600 dark:text-blue-400"
+                    : "text-muted-foreground"
+                }`}>
+                {step.label}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Progress line */}
+      <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-200 dark:bg-gray-800 -translate-y-1/2 z-0">
+        <div
+          className="h-full bg-blue-600 transition-all"
+          style={{
+            width: `${
+              currentStepIndex === 0
+                ? 0
+                : currentStepIndex === steps.length - 1
+                  ? "100%"
+                  : `${(currentStepIndex / (steps.length - 1)) * 100}%`
+            }`,
+          }}
+        />
+      </div>
     </div>
   );
 }
