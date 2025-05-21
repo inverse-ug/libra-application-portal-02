@@ -15,7 +15,7 @@ function VerificationFormLoading() {
 }
 
 // Main component that wraps the form in a Suspense boundary
-export default function VerifyAccountForm() {
+export default function VerifyAccountPage() {
   return (
     <Suspense fallback={<VerificationFormLoading />}>
       <VerificationForm />
