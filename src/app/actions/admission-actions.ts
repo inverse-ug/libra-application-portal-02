@@ -77,8 +77,6 @@ export async function getAdmissionByApplicationId(applicationId: string) {
   return admission;
 }
 
-("use server");
-
 import { redirect } from "next/navigation";
 
 /**
