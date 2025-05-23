@@ -6,6 +6,7 @@ import {
   FileCheck,
   AlertCircle,
   BookOpen,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,10 +28,33 @@ import {
 } from "@/app/actions/intake-actions";
 import { IntakeCard } from "@/components/intake-card";
 import { ShortCourseCTA } from "@/components/short-course-cta";
+import { toast } from "sonner";
+
+interface Application {
+  id: string;
+  status: string;
+  intake?: {
+    id: string;
+    name: string;
+    startDate: Date;
+    endDate: Date;
+  };
+  program?: {
+    id: string;
+    title: string;
+    type: string;
+    duration?: string;
+  };
+  admission?: {
+    id: string;
+    admissionNumber: string;
+    status: string;
+  };
+}
 
 export default function HomeContent({ userId }: { userId?: string }) {
   const [intakes, setIntakes] = useState<any[]>([]);
-  const [applications, setApplications] = useState<any[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState({
     intakes: true,
@@ -59,6 +83,7 @@ export default function HomeContent({ userId }: { userId?: string }) {
         setIsLoading((prev) => ({ ...prev, announcements: false }));
       } catch (error) {
         console.error("Error fetching data:", error);
+        toast.error("Failed to load dashboard data. Please refresh the page.");
         setIsLoading({
           intakes: false,
           applications: false,
@@ -77,6 +102,18 @@ export default function HomeContent({ userId }: { userId?: string }) {
   const admittedIntake = admittedApplication?.intake;
   const admittedProgram = admittedApplication?.program;
 
+  // Format program display name
+  const getProgramDisplayName = (program: any) => {
+    if (!program) return "Unknown Program";
+    return program.title;
+  };
+
+  // Format intake display name
+  const getIntakeDisplayName = (intake: any) => {
+    if (!intake) return "Unknown Intake";
+    return intake.name;
+  };
+
   return (
     <>
       {/* Provisional Admission Section - Only show if user has an approved application */}
@@ -87,7 +124,9 @@ export default function HomeContent({ userId }: { userId?: string }) {
               <div className="h-8 w-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                 <FileCheck className="h-5 w-5" />
               </div>
-              <CardTitle>Provisional Admission</CardTitle>
+              <CardTitle className="text-emerald-700 dark:text-emerald-400">
+                Provisional Admission
+              </CardTitle>
             </div>
             <CardDescription>
               Congratulations! You have been provisionally admitted to the
@@ -96,10 +135,35 @@ export default function HomeContent({ userId }: { userId?: string }) {
           </CardHeader>
           <CardContent className="pt-4">
             <div className="border border-emerald-200 dark:border-emerald-800 bg-white dark:bg-slate-900 p-4 mb-4 rounded-lg">
-              <h3 className="font-medium mb-2 text-emerald-700 dark:text-emerald-400">
-                {admittedIntake?.name || "Your Program"} -{" "}
-                {admittedProgram?.name || "Admitted Program"}
-              </h3>
+              <div className="mb-3">
+                <h3 className="font-medium mb-1 text-emerald-700 dark:text-emerald-400">
+                  {getProgramDisplayName(admittedProgram)}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-2">
+                  <span className="font-medium">Intake:</span>{" "}
+                  {getIntakeDisplayName(admittedIntake)}
+                </p>
+                {admittedProgram?.type && (
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <span className="font-medium">Program Type:</span>{" "}
+                    <Badge variant="outline" className="ml-1">
+                      {admittedProgram.type.replace("_", " ")}
+                    </Badge>
+                  </p>
+                )}
+                {admittedProgram?.duration && (
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <span className="font-medium">Duration:</span>{" "}
+                    {admittedProgram.duration}
+                  </p>
+                )}
+                {admittedIntake?.startDate && (
+                  <p className="text-sm text-muted-foreground mb-2">
+                    <span className="font-medium">Start Date:</span>{" "}
+                    {new Date(admittedIntake.startDate).toLocaleDateString()}
+                  </p>
+                )}
+              </div>
               <p className="text-sm text-muted-foreground mb-4">
                 Your application has been reviewed and you have been
                 provisionally admitted. Please download your admission letter
@@ -111,8 +175,18 @@ export default function HomeContent({ userId }: { userId?: string }) {
                   asChild
                   className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm">
                   <Link
-                    href={`/application-history/${admittedApplication.id}/admission-letter`}>
+                    href={`/my-applications/${admittedApplication.id}/admission-letter`}>
+                    <Download className="h-4 w-4 mr-2" />
                     Download Admission Letter
+                  </Link>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  asChild
+                  className="border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
+                  <Link href="/application-history">
+                    View Application Details
                   </Link>
                 </Button>
               </div>
@@ -251,9 +325,16 @@ export default function HomeContent({ userId }: { userId?: string }) {
                           ).toLocaleDateString()}
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground mb-2">
                         {announcement.content}
                       </p>
+                      {announcement.intake && (
+                        <div className="mt-2">
+                          <Badge variant="secondary" className="text-xs">
+                            Related to: {announcement.intake.name}
+                          </Badge>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
