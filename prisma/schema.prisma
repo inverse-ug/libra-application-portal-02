@@ -296,3 +296,14 @@ enum NotificationType {
   ADMISSION_UPDATE
   GENERAL
 }
+
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
