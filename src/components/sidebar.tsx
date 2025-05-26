@@ -43,7 +43,7 @@ import {
 import Image from "next/image";
 import logo from "@/assets/logo.png";
 import { useUser } from "@/hooks/use-user";
-import { UserInfoModal } from "@/components/user-info-modal";
+// import { UserInfoModal } from "@/components/user-info-modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { signOut } from "next-auth/react";
 
@@ -53,7 +53,7 @@ export default function Sidebar() {
   const isMobile = useMobile();
   const router = useRouter();
   const { user, isLoading } = useUser();
-  const [showUserModal, setShowUserModal] = useState(false);
+  // const [showUserModal, setShowUserModal] = useState(false);
 
   // Get initials for avatar
   const getInitials = (name) => {
@@ -152,14 +152,14 @@ export default function Sidebar() {
           )}
         </div>
         <div className="p-1">
-          <button
+          {/* <button
             onClick={() => setShowUserModal(true)}
             className="flex items-center gap-2 w-full text-sm px-3 py-2 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors text-left">
             <div className="h-6 w-6 rounded-md bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
               <RiUserLine className="h-3.5 w-3.5" />
             </div>
             View Profile
-          </button>
+          </button> */}
 
           <Link
             href="/settings"
@@ -466,7 +466,7 @@ export default function Sidebar() {
             <MobileSidebarContent />
           </SheetContent>
         </Sheet>
-        <UserInfoModal open={showUserModal} onOpenChange={setShowUserModal} />
+        {/* <UserInfoModal open={showUserModal} onOpenChange={setShowUserModal} /> */}
       </>
     );
   }
@@ -482,7 +482,7 @@ export default function Sidebar() {
           <DesktopSidebarContent />
         </div>
       </TooltipProvider>
-      <UserInfoModal open={showUserModal} onOpenChange={setShowUserModal} />
+      {/* <UserInfoModal open={showUserModal} onOpenChange={setShowUserModal} /> */}
     </>
   );
 }
