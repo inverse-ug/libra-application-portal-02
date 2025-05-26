@@ -237,23 +237,6 @@ export function UserInfoModal({ open, onOpenChange }: UserInfoModalProps) {
             </div>
           </div>
         </ScrollArea>
-
-        {/* Action Buttons */}
-        <div className="p-6 bg-muted/30 border-t border-border">
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              className="flex-1 rounded-full border-2 hover:bg-accent hover:border-accent-foreground/20 transition-colors">
-              <Printer className="h-4 w-4 mr-2" />
-              Print ID
-            </Button>
-            {/* Main action button keeps colorful gradient for emphasis */}
-            <Button className="flex-1 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg text-white">
-              <Download className="h-4 w-4 mr-2" />
-              Download
-            </Button>
-          </div>
-        </div>
       </DialogContent>
     </Dialog>
   );

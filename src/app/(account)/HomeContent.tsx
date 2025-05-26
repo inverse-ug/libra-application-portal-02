@@ -212,6 +212,10 @@ export default function HomeContent({ userId }: { userId?: string }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
+          {/* Short Course CTA */}
+          <div className="mb-6">
+            <ShortCourseCTA />
+          </div>
           <Card className="overflow-hidden rounded-xl shadow-sm py-0">
             <CardHeader className="bg-blue-50/50 dark:bg-blue-950/20 pt-6 border-b">
               <div className="flex items-center gap-2">
@@ -275,11 +279,6 @@ export default function HomeContent({ userId }: { userId?: string }) {
               )}
             </CardContent>
           </Card>
-
-          {/* Short Course CTA */}
-          <div className="mt-6">
-            <ShortCourseCTA />
-          </div>
         </div>
 
         <div className="lg:col-span-1">
