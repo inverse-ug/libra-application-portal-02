@@ -11,7 +11,7 @@ export default function Page() {
     <div className="min-h-screen flex flex-col lg:flex-row bg-background">
       {/* Left side - Registration Form */}
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-start p-8">
-        <div className="w-full max-w-md space-y-8 mb-8">
+        <div className="w-full max-w-lg space-y-8 mb-8">
           <div className="flex flex-col items-center">
             <div className={`flex items-center`}>
               <Image

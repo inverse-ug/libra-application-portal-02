@@ -52,12 +52,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       async authorize(credentials) {
         try {
           if (!credentials?.identifier || !credentials.password) {
-            throw new Error("ValidationError", {
-              cause: {
-                message: "Please enter both identifier and password",
-                status: 400,
-              },
-            });
+            return null;
           }
 
           let isEmail = false;
@@ -81,12 +76,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           if (!user || !user.password) {
-            throw new Error("AuthError", {
-              cause: {
-                message: "Invalid credentials",
-                status: 401,
-              },
-            });
+            return null;
           }
 
           const isValid = await bcrypt.compare(
@@ -95,32 +85,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           );
 
           if (!isValid) {
-            throw new Error("AuthError", {
-              cause: {
-                message: "Invalid credentials",
-                status: 401,
-              },
-            });
+            return null;
           }
 
+          // Only return user if they are verified (verification check done in server action)
           if (isEmail && !user.emailVerified) {
-            throw new Error("VerificationError", {
-              cause: {
-                message: "Please verify your email before logging in",
-                status: 403,
-                verificationType: "email",
-              },
-            });
+            return null;
           }
 
           if (!isEmail && !user.phoneVerified) {
-            throw new Error("VerificationError", {
-              cause: {
-                message: "Please verify your phone before logging in",
-                status: 403,
-                verificationType: "phone",
-              },
-            });
+            return null;
           }
 
           return {
@@ -131,19 +105,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             role: user.role || "applicant",
           };
         } catch (error: any) {
-          if (error.message === "VerificationError") {
-            throw new Error(error.cause?.message || "Verification required");
-          }
-
-          if (error.message === "ValidationError") {
-            throw new Error(error.cause?.message || "Invalid input");
-          }
-
-          if (error.message === "AuthError") {
-            throw new Error(error.cause?.message || "Authentication failed");
-          }
-
-          throw error;
+          console.error("Auth error:", error);
+          return null;
         }
       },
     }),
@@ -189,16 +152,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: { id: user.id },
           data: {
             lastLoginAt: new Date(),
-            loginAttempts: 0, // Reset login attempts on successful login
+            loginAttempts: 0,
           },
         });
       } catch (error) {
         console.error("Failed to update last login:", error);
       }
-    },
-    async signOut({}) {
-      // Optional: Add any cleanup on signout if needed
-      // Note: Changed parameter from token to session to match the event type
     },
   },
   debug: process.env.NODE_ENV === "development",

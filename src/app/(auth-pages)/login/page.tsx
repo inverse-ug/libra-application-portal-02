@@ -11,7 +11,7 @@ export default function Page() {
     <div className="min-h-screen flex bg-background">
       {/* Left side - Login Form */}
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 overflow-y-auto">
-        <div className="w-full max-w-md space-y-8">
+        <div className="w-full max-w-lg space-y-8">
           <div className="flex flex-col items-center">
             <div className={`flex items-center`}>
               <Image
@@ -40,7 +40,7 @@ export default function Page() {
       </div>
 
       {/* Right side - Testimonial Carousel */}
-      <div className="hidden lg:block lg:w-1/2 bg-secondary h-screen">
+      <div className="hidden lg:block lg:w-1/2 bg-secondary sticky top-0 h-screen">
         <TestimonialCarousel />
       </div>
     </div>

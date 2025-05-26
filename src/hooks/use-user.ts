@@ -1,22 +1,34 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
+import { getCurrentApplicant } from "@/lib/user-utils";
 
 export function useUser() {
-  const { data: session, status } = useSession();
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Set loading to false once the session status is no longer "loading"
-    if (status !== "loading") {
-      setIsInitialLoading(false);
-    }
-  }, [status]);
+    const fetchUser = async () => {
+      try {
+        // Directly call the server action
+        const userData = await getCurrentApplicant();
+        setUser(userData);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err : new Error("Failed to fetch user")
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   return {
-    user: session?.user || null,
-    isLoading: status === "loading" || isInitialLoading,
-    error: status === "unauthenticated" ? new Error("Not authenticated") : null,
+    user,
+    isLoading,
+    error,
   };
 }

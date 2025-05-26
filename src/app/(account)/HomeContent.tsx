@@ -313,13 +313,13 @@ export default function HomeContent({ userId }: { userId?: string }) {
                     <div
                       key={announcement.id}
                       className="border border-amber-200 dark:border-amber-800 p-4 rounded-lg bg-white dark:bg-slate-900">
-                      <div className="flex justify-between items-start mb-2">
+                      <div className="flex flex-col gap-2 mb-2">
                         <h3 className="font-medium text-amber-700 dark:text-amber-400">
                           {announcement.title}
                         </h3>
                         <Badge
                           variant="outline"
-                          className="bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800 rounded-md">
+                          className="bg-amber-50 self-end dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800 rounded-md">
                           {new Date(
                             announcement.createdAt
                           ).toLocaleDateString()}

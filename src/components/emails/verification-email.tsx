@@ -83,9 +83,7 @@ export const VerificationEmail = ({
               Support
             </Link>
           </Section>
-          <Text style={footerAddress}>
-            123 Education Way, Kampala, Uganda | P.O. Box 12345
-          </Text>
+          <Text style={footerAddress}>P.O. Box 120466, Kampala</Text>
         </Section>
       </Container>
     </Body>

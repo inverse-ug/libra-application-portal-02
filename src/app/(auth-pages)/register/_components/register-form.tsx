@@ -13,20 +13,120 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff, Loader } from "lucide-react";
-import { useState } from "react";
+import { Eye, EyeOff, Loader, Check, X } from "lucide-react";
+import { useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { registerApplicantEmail, registerApplicantPhone } from "../../actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-interface ActionResponse {
-  success: boolean;
-  message: string;
-  requiresVerification?: boolean;
-  verificationType?: "email" | "phone";
-  identifier?: string;
+interface PasswordRequirement {
+  text: string;
+  test: (password: string) => boolean;
 }
+
+const passwordRequirements: PasswordRequirement[] = [
+  {
+    text: "At least 8 characters",
+    test: (password: string) => password.length >= 8,
+  },
+  {
+    text: "One uppercase letter",
+    test: (password: string) => /[A-Z]/.test(password),
+  },
+  {
+    text: "One lowercase letter",
+    test: (password: string) => /[a-z]/.test(password),
+  },
+  {
+    text: "One number",
+    test: (password: string) => /[0-9]/.test(password),
+  },
+];
+
+const PasswordStrengthIndicator = ({ password }: { password: string }) => {
+  const strength = useMemo(() => {
+    const passedRequirements = passwordRequirements.filter((req) =>
+      req.test(password)
+    );
+    return {
+      score: passedRequirements.length,
+      total: passwordRequirements.length,
+      percentage:
+        (passedRequirements.length / passwordRequirements.length) * 100,
+    };
+  }, [password]);
+
+  const getStrengthColor = () => {
+    if (strength.percentage === 0) return "bg-gray-200";
+    if (strength.percentage <= 25) return "bg-red-500";
+    if (strength.percentage <= 50) return "bg-orange-500";
+    if (strength.percentage <= 75) return "bg-yellow-500";
+    return "bg-green-500";
+  };
+
+  const getStrengthText = () => {
+    if (strength.percentage === 0) return "Enter password";
+    if (strength.percentage <= 25) return "Weak";
+    if (strength.percentage <= 50) return "Fair";
+    if (strength.percentage <= 75) return "Good";
+    return "Strong";
+  };
+
+  if (!password) return null;
+
+  return (
+    <div className="mt-3 space-y-3">
+      <div className="space-y-2">
+        <div className="flex justify-between items-center text-sm">
+          <span className="text-muted-foreground text-xs">
+            Password strength
+          </span>
+          <span
+            className={`font-medium text-xs ${
+              strength.percentage <= 25
+                ? "text-red-600"
+                : strength.percentage <= 50
+                  ? "text-orange-600"
+                  : strength.percentage <= 75
+                    ? "text-yellow-600"
+                    : "text-green-600"
+            }`}>
+            {getStrengthText()}
+          </span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-1">
+          <div
+            className={`h-1 rounded-full transition-all duration-300 ${getStrengthColor()}`}
+            style={{ width: `${strength.percentage}%` }}
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        {passwordRequirements.map((requirement, index) => {
+          const isValid = requirement.test(password);
+          return (
+            <div
+              key={index}
+              className={`flex items-center gap-2 text-sm transition-colors duration-200 ${
+                isValid ? "text-green-600" : "text-gray-500"
+              }`}>
+              {isValid ? (
+                <Check className="h-3 w-3 text-green-500" />
+              ) : (
+                <X className="h-3 w-3 text-gray-400" />
+              )}
+              <span className={`text-xs ${isValid ? "line-through" : ""}`}>
+                {requirement.text}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 const phoneRegisterSchema = z
   .object({
@@ -83,7 +183,7 @@ export default function RegisterForm() {
     resolver: zodResolver(emailRegisterSchema),
     defaultValues: {
       name: "",
-      email: searchParams.get("email") || "",
+      email: searchParams?.get("email") || "",
       password: "",
       confirmPassword: "",
     },
@@ -93,11 +193,15 @@ export default function RegisterForm() {
     resolver: zodResolver(phoneRegisterSchema),
     defaultValues: {
       name: "",
-      phone: searchParams.get("phone") || "",
+      phone: searchParams?.get("phone") || "",
       password: "",
       confirmPassword: "",
     },
   });
+
+  // Watch password fields for strength indicator
+  const emailPassword = emailForm.watch("password");
+  const phonePassword = phoneForm.watch("password");
 
   const onSubmitEmail = async (values: z.infer<typeof emailRegisterSchema>) => {
     setIsSubmitting(true);
@@ -112,6 +216,7 @@ export default function RegisterForm() {
 
       if (result.success) {
         toast.success("Registration successful!");
+        document.dispatchEvent(new Event("startNavigation"));
         router.push(`/verify?email=${encodeURIComponent(values.email)}`);
       } else {
         toast.error("Registration failed", {
@@ -160,7 +265,7 @@ export default function RegisterForm() {
   return (
     <div className="px-2 py-8 sm:p-8">
       <Tabs defaultValue="email" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-2 mb-6">
+        <TabsList className="grid grid-cols-2 mb-6 w-full">
           <TabsTrigger value="email">Register with Email</TabsTrigger>
           <TabsTrigger value="phone">Register with Phone</TabsTrigger>
         </TabsList>
@@ -215,30 +320,35 @@ export default function RegisterForm() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="••••••••"
-                          {...field}
-                          autoComplete="new-password"
-                          disabled={isSubmitting}
+                      <div className="space-y-2">
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            {...field}
+                            autoComplete="new-password"
+                            disabled={isSubmitting}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                            disabled={isSubmitting}>
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                            <span className="sr-only">
+                              {showPassword ? "Hide password" : "Show password"}
+                            </span>
+                          </Button>
+                        </div>
+                        <PasswordStrengthIndicator
+                          password={emailPassword || ""}
                         />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                          onClick={() => setShowPassword(!showPassword)}
-                          disabled={isSubmitting}>
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                          <span className="sr-only">
-                            {showPassword ? "Hide password" : "Show password"}
-                          </span>
-                        </Button>
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -355,30 +465,35 @@ export default function RegisterForm() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="••••••••"
-                          {...field}
-                          autoComplete="new-password"
-                          disabled={isSubmitting}
+                      <div className="space-y-2">
+                        <div className="relative">
+                          <Input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••"
+                            {...field}
+                            autoComplete="new-password"
+                            disabled={isSubmitting}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                            onClick={() => setShowPassword(!showPassword)}
+                            disabled={isSubmitting}>
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
+                            <span className="sr-only">
+                              {showPassword ? "Hide password" : "Show password"}
+                            </span>
+                          </Button>
+                        </div>
+                        <PasswordStrengthIndicator
+                          password={phonePassword || ""}
                         />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                          onClick={() => setShowPassword(!showPassword)}
-                          disabled={isSubmitting}>
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                          <span className="sr-only">
-                            {showPassword ? "Hide password" : "Show password"}
-                          </span>
-                        </Button>
                       </div>
                     </FormControl>
                     <FormMessage />

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { Eye, EyeOff, Loader } from "lucide-react";
+import { loginAction } from "../actions";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -57,60 +57,36 @@ export default function LoginForm() {
     setIsSubmitting(true);
 
     try {
-      const callbackUrl = searchParams.get("callbackUrl") || "/";
-      const result = await signIn("credentials", {
-        identifier: values.identifier,
-        password: values.password,
-        redirect: false,
-        callbackUrl,
-      });
+      // Create FormData from the form values
+      const formData = new FormData();
+      formData.append("identifier", values.identifier);
+      formData.append("password", values.password);
 
-      if (result?.error) {
-        // Map error codes/messages to user-friendly messages
-        const errorMessages: Record<string, string> = {
-          CredentialsSignin: "Invalid credentials. Please try again.",
-          "account not verified": "Your account needs to be verified.",
-          "invalid phone number": "Please enter a valid Ugandan phone number.",
-          "account not found": "No account found with these credentials.",
-          "server error": "The authentication server is currently unavailable.",
-        };
+      // Call the server action
+      const result = await loginAction(null, formData);
 
-        let friendlyError = "Login failed. Please try again.";
-
-        // Check if error matches any known patterns
-        for (const [errorKey, errorMessage] of Object.entries(errorMessages)) {
-          if (result.error.toLowerCase().includes(errorKey.toLowerCase())) {
-            friendlyError = errorMessage;
-            break;
-          }
-        }
-
-        // Handle unverified account case specially
-        if (result.error.toLowerCase().includes("account not verified")) {
-          const isEmail = values.identifier.includes("@");
-          const verificationType = isEmail ? "email" : "phone";
-
-          toast.message("Account Verification Required", {
-            description: "You need to verify your account before logging in",
-          });
-
-          return router.push(
-            `/verify?${verificationType}=${encodeURIComponent(values.identifier)}`
-          );
-        }
-
-        toast.error(friendlyError);
-
-        // Log the actual error for debugging
-        if (process.env.NODE_ENV === "development") {
-          console.error("Login error details:", result.error);
-        }
-      } else if (result?.ok) {
+      if (result.success) {
         toast.success("Login successful");
+        document.dispatchEvent(new Event("startNavigation"));
+        const callbackUrl = searchParams.get("callbackUrl") || "/";
         router.push(callbackUrl);
         router.refresh();
-      } else {
-        toast.error("An unexpected error occurred");
+      } else if (result.needsVerification) {
+        toast.message("Account Verification Required", {
+          description: "You need to verify your account before logging in",
+        });
+
+        const verificationType = result.verificationType;
+        const identifier = result.identifier;
+
+        if (verificationType && identifier) {
+          router.push(
+            `/verify?${verificationType}=${encodeURIComponent(identifier)}`
+          );
+          document.dispatchEvent(new Event("startNavigation"));
+        }
+      } else if (result.error) {
+        toast.error(result.error);
       }
     } catch (error) {
       console.error("Login error:", error);
