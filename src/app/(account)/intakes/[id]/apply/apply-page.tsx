@@ -88,7 +88,7 @@ export default function ApplyPage({ id }: { id: string }) {
 
   if (isUserLoading || isLoading) {
     return (
-      <div className="p-6 max-w-4xl mx-auto">
+      <div className="p-2 sm:p-6 max-w-4xl mx-auto">
         <Card className="rounded-xl shadow-md border-0">
           <CardHeader className="pb-2">
             <Skeleton className="h-8 w-64 mb-2" />
@@ -137,7 +137,7 @@ export default function ApplyPage({ id }: { id: string }) {
   const defaultTabValue = programTypes.length > 0 ? programTypes[0] : "";
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-2 sm:p-6 max-w-4xl mx-auto">
       <Card className="rounded-xl shadow-md border-0">
         <CardHeader className="pb-4">
           <CardTitle className="text-2xl font-semibold">
@@ -167,7 +167,7 @@ export default function ApplyPage({ id }: { id: string }) {
                   <TabsTrigger
                     key={type}
                     value={type}
-                    className="rounded-md data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 border">
+                    className="rounded-md data-[state=active]:bg-primary/5 data-[state=active]:text-primary border">
                     {type}
                   </TabsTrigger>
                 ))}
@@ -181,38 +181,38 @@ export default function ApplyPage({ id }: { id: string }) {
                         key={program.id}
                         className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
                           selectedProgram === program.id
-                            ? "ring-2 ring-blue-500 bg-blue-50"
-                            : "hover:border-blue-200"
+                            ? "ring-2 ring-primary/95 bg-primary/5"
+                            : "hover:border-primary/30"
                         }`}
                         onClick={() => setSelectedProgram(program.id)}>
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between mb-2">
                           <h3 className="text-lg font-medium">
                             {program.title}
                           </h3>
                           <div
-                            className={`w-4 h-4 rounded-full ${
+                            className={`w-4 h-4 self-end sm:self-auto shrink-0 rounded-full ${
                               selectedProgram === program.id
-                                ? "bg-blue-500"
-                                : "border border-gray-300"
+                                ? "bg-primary/95"
+                                : "border border-muted-foreground/90"
                             }`}></div>
                         </div>
 
                         {program.description && (
-                          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                             {program.description}
                           </p>
                         )}
 
-                        <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                           {program.tuitionFee && (
                             <div className="flex items-center">
-                              <CreditCard className="h-3.5 w-3.5 mr-1.5 text-gray-500" />
+                              <CreditCard className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
                               {formatCurrency(program.tuitionFee)}
                             </div>
                           )}
                           {program.duration && (
                             <div className="flex items-center">
-                              <Clock className="h-3.5 w-3.5 mr-1.5 text-gray-500" />
+                              <Clock className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
                               {program.duration}
                             </div>
                           )}
@@ -230,8 +230,8 @@ export default function ApplyPage({ id }: { id: string }) {
                   key={program.id}
                   className={`border rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
                     selectedProgram === program.id
-                      ? "ring-2 ring-blue-500 bg-blue-50"
-                      : "hover:border-blue-200"
+                      ? "ring-2 ring-primary/95 bg-primary/5"
+                      : "hover:border-primary/30"
                   }`}
                   onClick={() => setSelectedProgram(program.id)}>
                   <div className="flex items-center justify-between mb-2">
@@ -239,13 +239,13 @@ export default function ApplyPage({ id }: { id: string }) {
                     <div
                       className={`w-4 h-4 rounded-full ${
                         selectedProgram === program.id
-                          ? "bg-blue-500"
-                          : "border border-gray-300"
+                          ? "bg-primary/95"
+                          : "border border-muted-foreground/90"
                       }`}></div>
                   </div>
 
                   {program.description && (
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                       {program.description}
                     </p>
                   )}
@@ -253,13 +253,13 @@ export default function ApplyPage({ id }: { id: string }) {
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     {program.tuitionFee && (
                       <div className="flex items-center">
-                        <CreditCard className="h-3.5 w-3.5 mr-1.5 text-gray-500" />
+                        <CreditCard className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
                         {formatCurrency(program.tuitionFee)}
                       </div>
                     )}
                     {program.duration && (
                       <div className="flex items-center">
-                        <Clock className="h-3.5 w-3.5 mr-1.5 text-gray-500" />
+                        <Clock className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
                         {program.duration}
                       </div>
                     )}
@@ -274,7 +274,7 @@ export default function ApplyPage({ id }: { id: string }) {
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || !selectedProgram}
-            className="rounded-lg bg-blue-600 hover:bg-blue-700 px-6"
+            className="px-6"
             size="lg">
             {isSubmitting ? "Processing..." : "Continue to Application"}
             {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4" />}

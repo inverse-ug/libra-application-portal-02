@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, RefObject, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -24,6 +24,9 @@ import {
   RiGraduationCapFill,
   RiFileListLine,
   RiFileListFill,
+  RiSparklingLine,
+  RiSparklingFill,
+  RiAddLine,
 } from "@remixicon/react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -43,17 +46,114 @@ import {
 import Image from "next/image";
 import logo from "@/assets/logo.png";
 import { useUser } from "@/hooks/use-user";
-// import { UserInfoModal } from "@/components/user-info-modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { signOut } from "next-auth/react";
 
+const useClickAway = (
+  ref: RefObject<HTMLElement>,
+  ignoreRef?: RefObject<HTMLElement> | undefined,
+  callback?: () => void
+) => {
+  useEffect(() => {
+    const handleClick = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
+      if (
+        ref.current &&
+        !ref.current.contains(target) &&
+        (!ignoreRef ||
+          !ignoreRef.current ||
+          !ignoreRef.current.contains(target))
+      ) {
+        callback();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("touchstart", handleClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("touchstart", handleClick);
+    };
+  }, [ref, ignoreRef, callback]);
+};
+
+// Custom Mobile Popover Component
+const CustomMobilePopover = ({ trigger, children, isOpen, onClose }) => {
+  const popoverRef = useRef(null);
+  const triggerRef = useRef(null);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+
+  // Calculate position function that can be reused
+  const calculatePosition = useCallback(() => {
+    if (isOpen && triggerRef.current) {
+      const triggerRect = triggerRef.current.getBoundingClientRect();
+      const popoverHeight = 200; // Approximate height
+
+      // Position above the trigger
+      const top = triggerRect.top - popoverHeight + 48;
+      const left = triggerRect.left;
+
+      // Adjust if it goes off screen
+      const adjustedTop = top < 0 ? triggerRect.bottom + 8 : top;
+      const adjustedLeft = Math.max(
+        8,
+        Math.min(left, window.innerWidth - 224 - 8)
+      ); // 224 is popover width
+
+      setPosition({ top: adjustedTop, left: adjustedLeft });
+    }
+  }, [isOpen]);
+
+  useClickAway(popoverRef, triggerRef, onClose);
+
+  useEffect(() => {
+    calculatePosition();
+
+    // Add resize event listener
+    const handleResize = () => {
+      calculatePosition();
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [calculatePosition]);
+
+  return (
+    <>
+      <div ref={triggerRef}>{trigger}</div>
+      {isOpen && (
+        <div
+          ref={popoverRef}
+          className="fixed w-56 p-0 rounded-lg bg-popover border shadow-lg z-[9999]"
+          style={{
+            top: `${position.top}px`,
+            left: `${position.left}px`,
+          }}>
+          {children}
+        </div>
+      )}
+    </>
+  );
+};
 export default function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileUserPopoverOpen, setMobileUserPopoverOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const isMobile = useMobile();
   const router = useRouter();
   const { user, isLoading } = useUser();
-  // const [showUserModal, setShowUserModal] = useState(false);
+
+  // Close mobile popover when sheet closes
+  useEffect(() => {
+    if (!sheetOpen) {
+      setMobileUserPopoverOpen(false);
+    }
+  }, [sheetOpen]);
 
   // Get initials for avatar
   const getInitials = (name) => {
@@ -93,47 +193,46 @@ export default function Sidebar() {
     }
   };
 
-  const UserSection = ({ collapsed }) => (
-    <Popover>
-      <PopoverTrigger asChild>
+  const UserSection = ({ collapsed, isMobileContext = false }) => {
+    const triggerContent = (
+      <div
+        className={`flex items-center gap-2 w-full text-sm px-3 py-2 hover:bg-accent/10 rounded-lg transition-colors text-left cursor-pointer ${collapsed ? "justify-center" : "justify-start"}`}>
         <div
-          className={`flex items-center gap-2 w-full text-sm px-3 py-2 hover:bg-accent/10 rounded-lg transition-colors text-left data-[state=open]:bg-accent/10 cursor-pointer ${collapsed ? "justify-center" : "justify-start"}`}>
-          <div
-            className={`flex items-center gap-2 ${collapsed ? "flex-col" : ""}`}>
-            <div className="h-9 w-9 bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 rounded-lg shadow-sm shrink-0 border border-indigo-200 dark:border-indigo-800">
-              {isLoading ? (
-                <Skeleton className="w-full h-full rounded-lg" />
-              ) : user?.name ? (
-                getInitials(user.name)
-              ) : (
-                "?"
-              )}
-            </div>
-            {!collapsed && (
-              <div className="min-w-24">
-                {isLoading ? (
-                  <div className="space-y-1">
-                    <Skeleton className="h-4 w-20" />
-                    <Skeleton className="h-3 w-16" />
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-sm font-medium line-clamp-1">
-                      {user?.name || "Guest"}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {user?.role === "admin" ? "Admin" : "Applicant"}
-                    </p>
-                  </>
-                )}
-              </div>
+          className={`flex items-center gap-2 ${collapsed ? "flex-col" : ""}`}>
+          <div className="h-9 w-9 bg-primary/10 flex items-center justify-center text-primary rounded-lg shadow-sm shrink-0 border border-primary/20">
+            {isLoading ? (
+              <Skeleton className="w-full h-full rounded-lg" />
+            ) : user?.name ? (
+              getInitials(user.name)
+            ) : (
+              "?"
             )}
           </div>
+          {!collapsed && (
+            <div className="min-w-24">
+              {isLoading ? (
+                <div className="space-y-1">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-3 w-16" />
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm font-medium line-clamp-1">
+                    {user?.name || "Guest"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {user?.role === "admin" ? "Admin" : "Applicant"}
+                  </p>
+                </>
+              )}
+            </div>
+          )}
         </div>
-      </PopoverTrigger>
-      <PopoverContent
-        className="w-56 p-0 rounded-lg"
-        align={collapsed ? "center" : "start"}>
+      </div>
+    );
+
+    const popoverContent = (
+      <>
         <div className="p-2 border-b">
           {isLoading ? (
             <div className="space-y-1">
@@ -152,19 +251,16 @@ export default function Sidebar() {
           )}
         </div>
         <div className="p-1">
-          {/* <button
-            onClick={() => setShowUserModal(true)}
-            className="flex items-center gap-2 w-full text-sm px-3 py-2 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors text-left">
-            <div className="h-6 w-6 rounded-md bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-              <RiUserLine className="h-3.5 w-3.5" />
-            </div>
-            View Profile
-          </button> */}
-
           <Link
             href="/settings"
-            className="flex items-center gap-2 w-full text-sm px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/20 rounded-lg transition-colors">
-            <div className="h-6 w-6 rounded-md bg-slate-100 dark:bg-slate-800/40 flex items-center justify-center text-slate-600 dark:text-slate-400">
+            onClick={() => {
+              if (isMobileContext) {
+                setMobileUserPopoverOpen(false);
+                setSheetOpen(false);
+              }
+            }}
+            className="flex items-center gap-2 w-full text-sm px-3 py-2 hover:bg-accent rounded-lg transition-colors">
+            <div className="h-6 w-6 rounded-md bg-accent flex items-center justify-center text-muted-foreground">
               <RiSettings4Line className="h-3.5 w-3.5" />
             </div>
             Settings
@@ -172,6 +268,12 @@ export default function Sidebar() {
           {!isLoading && user?.role === "admin" && (
             <Link
               href="/admin"
+              onClick={() => {
+                if (isMobileContext) {
+                  setMobileUserPopoverOpen(false);
+                  setSheetOpen(false);
+                }
+              }}
               className="flex items-center gap-2 w-full text-sm px-3 py-2 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors">
               <div className="h-6 w-6 rounded-md bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
                 <RiShieldUserLine className="h-3.5 w-3.5" />
@@ -180,17 +282,57 @@ export default function Sidebar() {
             </Link>
           )}
           <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 w-full text-sm px-3 py-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors text-left">
-            <div className="h-6 w-6 rounded-md bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400">
+            onClick={() => {
+              if (isMobileContext) {
+                setMobileUserPopoverOpen(false);
+                setSheetOpen(false);
+              }
+              handleLogout();
+            }}
+            className="flex items-center gap-2 w-full text-sm px-3 py-2 hover:bg-destructive/10 rounded-lg transition-colors text-left">
+            <div className="h-6 w-6 rounded-md bg-destructive/10 flex items-center justify-center text-destructive">
               <RiLogoutBoxRLine className="h-3.5 w-3.5" />
             </div>
             Logout
           </button>
         </div>
-      </PopoverContent>
-    </Popover>
-  );
+      </>
+    );
+
+    if (isMobileContext) {
+      return (
+        <CustomMobilePopover
+          trigger={
+            <button
+              type="button"
+              onClick={() => setMobileUserPopoverOpen(!mobileUserPopoverOpen)}
+              className="w-full">
+              {triggerContent}
+            </button>
+          }
+          isOpen={mobileUserPopoverOpen}
+          onClose={() => setMobileUserPopoverOpen(false)}>
+          {popoverContent}
+        </CustomMobilePopover>
+      );
+    }
+
+    // Desktop version with regular Popover
+    return (
+      <Popover>
+        <PopoverTrigger asChild>
+          <button type="button" className="w-full">
+            {triggerContent}
+          </button>
+        </PopoverTrigger>
+        <PopoverContent
+          className="w-56 p-0 rounded-lg"
+          align={collapsed ? "center" : "start"}>
+          {popoverContent}
+        </PopoverContent>
+      </Popover>
+    );
+  };
 
   const navigation = [
     {
@@ -212,6 +354,16 @@ export default function Sidebar() {
       textColor: "text-emerald-600 dark:text-emerald-400",
       borderColor: "border-emerald-200 dark:border-emerald-800",
       hoverBg: "hover:bg-emerald-50 dark:hover:bg-emerald-900/10",
+    },
+    {
+      name: "Short Courses",
+      href: "/short-courses",
+      iconLine: RiSparklingLine,
+      iconFill: RiSparklingFill,
+      bgColor: "bg-cyan-100 dark:bg-cyan-900/20",
+      textColor: "text-cyan-600 dark:text-cyan-400",
+      borderColor: "border-cyan-200 dark:border-cyan-800",
+      hoverBg: "hover:bg-cyan-50 dark:hover:bg-cyan-900/10",
     },
     {
       name: "All Programs",
@@ -258,12 +410,43 @@ export default function Sidebar() {
       href: "/settings",
       iconLine: RiSettings4Line,
       iconFill: RiSettings4Fill,
-      bgColor: "bg-slate-100 dark:bg-slate-800/40",
-      textColor: "text-slate-600 dark:text-slate-400",
-      borderColor: "border-slate-200 dark:border-slate-700",
-      hoverBg: "hover:bg-slate-50 dark:hover:bg-slate-800/20",
+      bgColor: "bg-accent",
+      textColor: "text-muted-foreground",
+      borderColor: "border-border",
+      hoverBg: "hover:bg-accent",
     },
   ];
+
+  // Apply Now Button Component
+  const ApplyNowButton = ({ collapsed }) => {
+    if (collapsed) {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link
+              href="/apply"
+              className="flex items-center justify-center gap-3 px-3 py-3 bg-primary text-primary-foreground rounded-lg transition-all hover:bg-primary/90">
+              <RiAddLine className="h-5 w-5 flex-shrink-0" />
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p>Apply Now</p>
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return (
+      <Link
+        href="/apply"
+        className="flex items-center gap-3 px-4 py-3 bg-primary text-primary-foreground rounded-lg transition-all hover:bg-primary/90">
+        <div className="h-8 w-8 rounded-md bg-primary-foreground/20 flex items-center justify-center">
+          <RiAddLine className="h-5 w-5 flex-shrink-0" />
+        </div>
+        <span className="font-medium">Apply Now</span>
+      </Link>
+    );
+  };
 
   // Desktop sidebar content with collapsing functionality
   const DesktopSidebarContent = () => (
@@ -307,68 +490,72 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 p-3 overflow-y-auto">
-        <ul className="space-y-1">
-          {navigation.map((item) => {
-            // Check if the current path starts with the nav item path
-            // Or exact match for home page
-            const isActive =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(item.href);
+        <div className="space-y-3">
+          {/* Apply Now Button */}
+          <ApplyNowButton collapsed={collapsed} />
 
-            const Icon = isActive ? item.iconFill : item.iconLine;
+          {/* Navigation Links */}
+          <ul className="space-y-1">
+            {navigation.map((item) => {
+              const isActive =
+                item.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(item.href);
 
-            return (
-              <li key={item.name}>
-                {collapsed ? (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link
-                        href={item.href}
-                        className={`flex items-center justify-center gap-3 px-3 py-3 border rounded-lg transition-all ${
+              const Icon = isActive ? item.iconFill : item.iconLine;
+
+              return (
+                <li key={item.name}>
+                  {collapsed ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link
+                          href={item.href}
+                          className={`flex items-center justify-center gap-3 px-3 py-3 border rounded-lg transition-all ${
+                            isActive
+                              ? `${item.bgColor} ${item.textColor} ${item.borderColor}`
+                              : `hover:bg-accent/10 border-transparent hover:border-border`
+                          }`}>
+                          <Icon className="h-5 w-5 flex-shrink-0" />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        <p>{item.name}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={`flex items-center gap-3 px-4 py-3 border rounded-lg transition-all ${
+                        isActive
+                          ? `${item.borderColor}`
+                          : "hover:bg-accent/10 border-transparent hover:border-border"
+                      }`}>
+                      <div
+                        className={`h-8 w-8 rounded-md flex items-center justify-center ${
                           isActive
-                            ? `${item.bgColor} ${item.textColor} ${item.borderColor}`
-                            : `hover:bg-accent/10 border-transparent hover:border-border`
+                            ? `${item.bgColor} ${item.textColor}`
+                            : `${item.bgColor} ${item.textColor}`
                         }`}>
                         <Icon className="h-5 w-5 flex-shrink-0" />
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">
-                      <p>{item.name}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                ) : (
-                  <Link
-                    href={item.href}
-                    className={`flex items-center gap-3 px-4 py-3 border rounded-lg transition-all ${
-                      isActive
-                        ? `${item.borderColor}`
-                        : "hover:bg-accent/10 border-transparent hover:border-border"
-                    }`}>
-                    <div
-                      className={`h-8 w-8 rounded-md flex items-center justify-center ${
-                        isActive
-                          ? `${item.bgColor} ${item.textColor}`
-                          : `${item.bgColor} ${item.textColor}`
-                      }`}>
-                      <Icon className="h-5 w-5 flex-shrink-0" />
-                    </div>
-                    <span
-                      className={`font-medium ${isActive ? item.textColor : ""}`}>
-                      {item.name}
-                    </span>
-                  </Link>
-                )}
-              </li>
-            );
-          })}
-        </ul>
+                      </div>
+                      <span
+                        className={`font-medium ${isActive ? item.textColor : ""}`}>
+                        {item.name}
+                      </span>
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </nav>
 
       <div className="border-t p-3">
         <div
           className={`flex ${collapsed ? "flex-col items-center" : "items-center justify-between"} gap-4`}>
-          <UserSection collapsed={collapsed} />
+          <UserSection collapsed={collapsed} isMobileContext={false} />
           <div className={collapsed ? "mt-2" : ""}>
             <ThemeToggle />
           </div>
@@ -399,50 +586,59 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <nav className="flex-1 p-3">
-        <ul className="space-y-1">
-          {navigation.map((item) => {
-            // Check if the current path starts with the nav item path
-            // Or exact match for home page
-            const isActive =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(item.href);
+      <nav className="flex-1 p-3 overflow-y-scroll">
+        <div className="space-y-3">
+          {/* Apply Now Button */}
+          <ApplyNowButton collapsed={false} />
 
-            const Icon = isActive ? item.iconFill : item.iconLine;
+          {/* Navigation Links */}
+          <ul className="space-y-1">
+            {navigation.map((item) => {
+              const isActive =
+                item.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(item.href);
 
-            return (
-              <li key={item.name}>
-                <Link
-                  href={item.href}
-                  className={`flex items-center gap-3 px-4 py-3 border rounded-lg transition-all ${
-                    isActive
-                      ? `${item.borderColor}`
-                      : "hover:bg-accent/10 border-transparent hover:border-border"
-                  }`}>
-                  <div
-                    className={`h-8 w-8 rounded-md flex items-center justify-center ${
+              const Icon = isActive ? item.iconFill : item.iconLine;
+
+              return (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    onClick={() => setSheetOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-3 border rounded-lg transition-all ${
                       isActive
-                        ? `${item.bgColor} ${item.textColor}`
-                        : `${item.bgColor} ${item.textColor}`
+                        ? `${item.borderColor}`
+                        : "hover:bg-accent/10 border-transparent hover:border-border"
                     }`}>
-                    <Icon className="h-5 w-5 flex-shrink-0" />
-                  </div>
-                  <span
-                    className={`font-medium ${isActive ? item.textColor : ""}`}>
-                    {item.name}
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+                    <div
+                      className={`h-8 w-8 rounded-md flex items-center justify-center ${
+                        isActive
+                          ? `${item.bgColor} ${item.textColor}`
+                          : `${item.bgColor} ${item.textColor}`
+                      }`}>
+                      <Icon className="h-5 w-5 flex-shrink-0" />
+                    </div>
+                    <span
+                      className={`font-medium ${isActive ? item.textColor : ""}`}>
+                      {item.name}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </nav>
 
       <div className="p-4 border-t">
         <div className="flex items-center justify-between gap-4">
-          <UserSection collapsed={false} />
-          <ThemeToggle />
+          <div className="flex-1">
+            <UserSection collapsed={false} isMobileContext={true} />
+          </div>
+          <div className="shrink-0">
+            <ThemeToggle />
+          </div>
         </div>
       </div>
     </div>
@@ -452,7 +648,7 @@ export default function Sidebar() {
   if (isMobile) {
     return (
       <>
-        <Sheet>
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger asChild>
             <Button
               variant="outline"
@@ -466,7 +662,6 @@ export default function Sidebar() {
             <MobileSidebarContent />
           </SheetContent>
         </Sheet>
-        {/* <UserInfoModal open={showUserModal} onOpenChange={setShowUserModal} /> */}
       </>
     );
   }
@@ -482,7 +677,6 @@ export default function Sidebar() {
           <DesktopSidebarContent />
         </div>
       </TooltipProvider>
-      {/* <UserInfoModal open={showUserModal} onOpenChange={setShowUserModal} /> */}
     </>
   );
 }

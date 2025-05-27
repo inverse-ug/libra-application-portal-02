@@ -68,11 +68,6 @@ enum ApplicationStatus {
   ENROLLED
 }
 
-enum ProgramType {
-  DIPLOMA
-  CERTIFICATE
-  SHORT_COURSE
-}
 
 model VerificationToken {
   id          String   @id @default(cuid())
@@ -109,9 +104,9 @@ model Intake {
 
 model Program {
   id               String      @id @default(cuid())
+  code             String?     @unique 
   title            String
   description      String?
-  type             ProgramType @default(DIPLOMA)
   duration         String?     // e.g., "2 years", "6 months"
   tuitionFee       Float?
   requirements     String?
@@ -122,10 +117,11 @@ model Program {
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
   isShortCourse    Boolean     @default(false)
+  shortCourseDurationMonths Int @default(6) // Duration in months for short courses
 }
-
 model Category {
   id               String      @id @default(cuid())
+  code             String?     @unique 
   name             String      @unique
   description      String?
   programs         Program[]   @relation("ProgramToCategory")

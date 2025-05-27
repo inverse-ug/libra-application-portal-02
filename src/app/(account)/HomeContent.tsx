@@ -21,14 +21,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
-import {
-  getIntakes,
-  getUserApplications,
-  getAnnouncements,
-} from "@/app/actions/intake-actions";
+import { getIntakes, getUserApplications } from "@/app/actions/intake-actions";
 import { IntakeCard } from "@/components/intake-card";
 import { ShortCourseCTA } from "@/components/short-course-cta";
 import { toast } from "sonner";
+import { getAnnouncements } from "../actions/announcement-actions";
 
 interface Application {
   id: string;

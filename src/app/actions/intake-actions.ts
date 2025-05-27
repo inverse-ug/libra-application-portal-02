@@ -100,63 +100,6 @@ export async function getUserApplications(userId?: string) {
 }
 
 /**
- * Get announcements from database
- */
-export async function getAnnouncements(limit?: number) {
-  try {
-    const announcements = await prisma.announcement.findMany({
-      where: {
-        isPublished: true,
-      },
-      include: {
-        intake: {
-          include: {
-            programs: true,
-          },
-        },
-      },
-      orderBy: {
-        publishedAt: "desc",
-      },
-      take: limit,
-    });
-
-    return announcements;
-  } catch (error) {
-    console.error("Error fetching announcements:", error);
-    // Fallback to mock data if database query fails
-    const mockAnnouncements = [
-      {
-        id: "1",
-        title: "Applications Open for January 2025",
-        content:
-          "Applications for the January 2025 intake are now open. Apply early to secure your spot.",
-        createdAt: new Date("2024-10-01"),
-        intake: null,
-      },
-      {
-        id: "2",
-        title: "New Programs Added",
-        content:
-          "We've added several new programs to our offerings. Check them out in the programs section.",
-        createdAt: new Date("2024-09-15"),
-        intake: null,
-      },
-      {
-        id: "3",
-        title: "Scholarship Opportunities",
-        content:
-          "New scholarship opportunities are available for qualified applicants. See the scholarships page for details.",
-        createdAt: new Date("2024-09-01"),
-        intake: null,
-      },
-    ];
-
-    return limit ? mockAnnouncements.slice(0, limit) : mockAnnouncements;
-  }
-}
-
-/**
  * Generate admission letter for an accepted application
  */
 export async function generateAdmissionLetter(applicationId: string) {

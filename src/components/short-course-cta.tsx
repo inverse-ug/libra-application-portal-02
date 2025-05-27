@@ -20,7 +20,7 @@ export function ShortCourseCTA() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}>
       <Card className="overflow-hidden border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 shadow-md">
-        <CardHeader className="pb-4">
+        <CardHeader className="">
           <div className="flex flex-col sm:flex-row text-center sm:text-start items-center gap-2">
             <div className="h-10 w-10 shrink-0 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
               <BookOpen className="h-5 w-5" />
