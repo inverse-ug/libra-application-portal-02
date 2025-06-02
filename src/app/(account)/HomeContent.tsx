@@ -27,28 +27,6 @@ import { ShortCourseCTA } from "@/components/short-course-cta";
 import { toast } from "sonner";
 import { getAnnouncements } from "../actions/announcement-actions";
 
-interface Application {
-  id: string;
-  status: string;
-  intake?: {
-    id: string;
-    name: string;
-    startDate: Date;
-    endDate: Date;
-  };
-  program?: {
-    id: string;
-    title: string;
-    type: string;
-    duration?: string;
-  };
-  admission?: {
-    id: string;
-    admissionNumber: string;
-    status: string;
-  };
-}
-
 export default function HomeContent({ userId }: { userId?: string }) {
   const [intakes, setIntakes] = useState<any[]>([]);
   const [applications, setApplications] = useState<any[]>([]);

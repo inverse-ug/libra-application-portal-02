@@ -1,7 +1,7 @@
 "use client";
 
+import { getAnnouncements } from "@/app/actions/announcement-actions";
 import { useState, useEffect } from "react";
-import { getAnnouncements } from "@/app/actions/intake-actions";
 
 export function useAnnouncements(limit?: number) {
   const [announcements, setAnnouncements] = useState<any[]>([]);
