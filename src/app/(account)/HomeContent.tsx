@@ -51,7 +51,7 @@ interface Application {
 
 export default function HomeContent({ userId }: { userId?: string }) {
   const [intakes, setIntakes] = useState<any[]>([]);
-  const [applications, setApplications] = useState<Application[]>([]);
+  const [applications, setApplications] = useState<any[]>([]);
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState({
     intakes: true,
