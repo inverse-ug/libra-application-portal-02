@@ -116,7 +116,7 @@ model Program {
   admissions       Admission[]
   createdAt        DateTime    @default(now())
   updatedAt        DateTime    @updatedAt
-  isShortCourse    Boolean     @default(false)
+  hasShortCourse   Boolean     @default(false) @map("isShortCourse")
   shortCourseDurationMonths Int @default(6) // Duration in months for short courses
 }
 model Category {
@@ -166,7 +166,6 @@ model Application {
   
   // For short courses
   isShortCourse    Boolean     @default(false)
-  shortCourseDuration String?   // "3 months" or "6 months"
 }
 
 

@@ -552,7 +552,7 @@ export default function Sidebar() {
         </div>
       </nav>
 
-      <div className="border-t p-3">
+      <div className="border-t px-3 py-2.5">
         <div
           className={`flex ${collapsed ? "flex-col items-center" : "items-center justify-between"} gap-4`}>
           <UserSection collapsed={collapsed} isMobileContext={false} />

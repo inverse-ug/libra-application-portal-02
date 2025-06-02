@@ -482,7 +482,7 @@ export async function seedDatabase() {
           duration: program.duration,
           tuitionFee: program.tuitionFee,
           requirements: program.requirements,
-          isShortCourse: program.isShortCourse,
+          hasShortCourse: program.isShortCourse,
           categories: {
             connect: { id: program.categoryId },
           },

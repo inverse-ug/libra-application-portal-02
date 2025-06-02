@@ -19,7 +19,11 @@ export async function getIntakes({
   let intakes = await prisma.intake.findMany({
     where: query,
     include: {
-      programs: true,
+      programs: {
+        include: {
+          categories: true,
+        },
+      },
       applications: {
         include: {
           payment: true,
@@ -80,7 +84,11 @@ export async function getUserApplications(userId?: string) {
     include: {
       intake: {
         include: {
-          programs: true,
+          programs: {
+            include: {
+              categories: true,
+            },
+          },
         },
       },
       program: {
@@ -155,6 +163,10 @@ export async function generateAdmissionLetter(applicationId: string) {
         application.applicant.name ||
         `${application.applicant.firstName || ""} ${application.applicant.surname || ""}`.trim(),
       programTitle: application.program.title,
+      programDuration: application.program.hasShortCourse
+        ? `${application.program.shortCourseDurationMonths} months`
+        : application.program.duration,
+      hasShortCourse: application.program.hasShortCourse,
       intakeName: application.intake?.name || "N/A",
       startDate: application.intake?.startDate?.toLocaleDateString() || "TBD",
       admissionDate: admission.createdAt.toLocaleDateString(),
@@ -223,14 +235,17 @@ export async function getAdmissionLetterData(applicationId: string) {
         application.applicant.name ||
         `${application.applicant.firstName || ""} ${application.applicant.surname || ""}`.trim(),
       programTitle: application.program.title,
-      programType: application.program.type,
-      programDuration: application.program.duration,
+      programDuration: application.program.hasShortCourse
+        ? `${application.program.shortCourseDurationMonths} months`
+        : application.program.duration,
+      hasShortCourse: application.program.hasShortCourse,
       intakeName: application.intake?.name || "N/A",
       startDate: application.intake?.startDate?.toLocaleDateString() || "TBD",
       endDate: application.intake?.endDate?.toLocaleDateString() || "TBD",
       admissionDate: admission.createdAt.toLocaleDateString(),
       tuitionFee: application.program.tuitionFee,
       applicationId: application.id,
+      categories: application.program.categories?.map((cat) => cat.name) || [],
     };
   } catch (error) {
     console.error("Error getting admission letter data:", error);

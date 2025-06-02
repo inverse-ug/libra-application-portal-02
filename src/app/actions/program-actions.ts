@@ -18,7 +18,7 @@ export async function getPrograms(options?: {
       },
     };
   } else if (options?.includeShortCourses === false) {
-    where.isShortCourse = false;
+    where.hasShortCourse = false; // Fixed: use hasShortCourse instead of isShortCourse
   }
 
   const programs = await prisma.program.findMany({
@@ -38,8 +38,6 @@ export async function getPrograms(options?: {
     },
   });
 
-  console.log(programs);
-
   return programs;
 }
 
@@ -49,7 +47,7 @@ export async function getPrograms(options?: {
 export async function getShortCourses() {
   const shortCourses = await prisma.program.findMany({
     where: {
-      isShortCourse: true,
+      hasShortCourse: true, // Fixed: use hasShortCourse instead of isShortCourse
     },
     include: {
       categories: true,

@@ -103,17 +103,6 @@ export function ApplicationStepDocuments({
       setUploadStatus((prev) => ({ ...prev, [docType]: "uploading" }));
       setUploadProgress((prev) => ({ ...prev, [docType]: 0 }));
 
-      // Log user and application info for debugging
-      console.log("User info:", {
-        id: user?.id,
-        name: user?.name,
-        email: user?.email,
-      });
-      console.log("Application info:", {
-        id: application?.id,
-        status: application?.status,
-      });
-
       // Start progress animation
       const progressInterval = setInterval(() => {
         setUploadProgress((prev) => {
@@ -133,11 +122,6 @@ export function ApplicationStepDocuments({
       formData.append("userId", user.id);
       formData.append("documentType", docType);
       formData.append("documentName", docName);
-
-      // Upload file using server action
-      console.log("Calling uploadDocumentWithBlob with form data");
-      const result = await uploadDocumentWithBlob(formData);
-      console.log("Upload result:", result);
 
       clearInterval(progressInterval);
 

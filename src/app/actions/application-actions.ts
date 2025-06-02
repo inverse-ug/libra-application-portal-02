@@ -109,7 +109,6 @@ export async function createOrUpdateApplication(
       programId: programId,
       intakeId: data.intakeId,
       isShortCourse: data.isShortCourse || false,
-      shortCourseDuration: data.shortCourseDuration,
       status: "DRAFT",
       progress: 0,
       completedSteps: [],
@@ -135,7 +134,6 @@ export async function updateApplicationBasics(
     isShortCourse: boolean;
     intakeId: string | null;
     programId: string;
-    shortCourseDuration: string | null;
   }
 ) {
   const application = await prisma.application.update({
@@ -144,7 +142,6 @@ export async function updateApplicationBasics(
       isShortCourse: data.isShortCourse,
       intakeId: data.intakeId,
       programId: data.programId,
-      shortCourseDuration: data.shortCourseDuration,
       basicsComplete: true,
     },
     include: {
