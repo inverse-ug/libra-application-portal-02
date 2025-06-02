@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 function ResetPasswordLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardContent className="pt-6">
           <div className="flex items-center justify-center">
@@ -26,7 +26,7 @@ function ResetPasswordLoading() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md shadow-lg">
         <CardContent className="p-0">
           <Suspense fallback={<ResetPasswordLoading />}>
