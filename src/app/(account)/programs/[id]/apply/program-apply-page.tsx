@@ -53,7 +53,9 @@ export default function ProgramApplyPage({ id }: { id: string }) {
           const isShortCourseAvailable = programData.categories?.some(
             (cat: any) => cat.name === "Short Course"
           );
-          setIsShortCourse(isShortCourseAvailable && programData.isShortCourse);
+          setIsShortCourse(
+            isShortCourseAvailable && programData.hasShortCourse
+          );
 
           // Set default intake if available
           if (programData.intakes && programData.intakes.length > 0) {
